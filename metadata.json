@@ -1,0 +1,5 @@
+{
+  "name": "Ostrovok: Friends Recommend",
+  "description": "A prototype feature for Ostrovok that allows users to find hotels recommended by their friends and social connections, enhancing trust and personalizing the booking experience.",
+  "requestFramePermissions": []
+}
