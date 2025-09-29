@@ -2,7 +2,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+import WebApp from '@twa-dev/sdk';
 import App from './App';
+
+// Инициализация Telegram WebApp
+if (typeof window !== 'undefined' && WebApp.initDataUnsafe?.user) {
+  WebApp.ready();
+  WebApp.expand();
+}
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
