@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import type { DiscoverItem } from '../../types';
 import { getImagePropsSafe } from '../../utils/imageUtils';
 
@@ -191,15 +192,21 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
 
             {/* Gradient Overlay & Info */}
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-full p-5 z-10 text-white pointer-events-none">
+            <div className="absolute bottom-0 left-0 w-full p-5 z-20 text-white">
                 {recommendedBy && (
-                    <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white font-semibold px-3 py-1.5 rounded-full text-sm mb-2">
+                    <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white font-semibold px-3 py-1.5 rounded-full text-sm mb-2 pointer-events-none">
                         <span>⭐️</span>
                         <span>Рекомендует {recommendedBy.name.split(' ')[0]}</span>
                     </div>
                 )}
-                <h2 className="text-2xl font-bold leading-tight shadow-black/50 [text-shadow:_0_2px_4px_var(--tw-shadow-color)]">{hotel.name}</h2>
-                <div className="mt-2 text-xl font-bold">{hotel.pricePerNight.toLocaleString('ru-RU')} ₽ <span className="text-sm opacity-80 font-normal">/ ночь</span></div>
+                <Link
+                    to={`/hotel/${hotel.id}`}
+                    className="block pointer-events-auto"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <h2 className="text-2xl font-bold leading-tight shadow-black/50 [text-shadow:_0_2px_4px_var(--tw-shadow-color)] hover:underline">{hotel.name}</h2>
+                </Link>
+                <div className="mt-2 text-xl font-bold pointer-events-none">{hotel.pricePerNight.toLocaleString('ru-RU')} ₽ <span className="text-sm opacity-80 font-normal">/ ночь</span></div>
             </div>
 
             {/* Navigation controls */}
