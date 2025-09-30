@@ -189,12 +189,12 @@ export const useTelegramContacts = () => {
         }
       }
 
-      // Если не получилось через Telegram WebApp, используем фиксированный ID для демонстрации
       // В продакшене здесь должна быть авторизация через другой механизм
       if (!userId) {
         console.log('Telegram WebApp недоступен, используем демо-режим с фиксированным userId');
         // Используем userId из db.json для демонстрации
-        userId = 427649895;
+        setAllContacts([]);
+        return [];
       }
 
       const apiUrl = getApiUrl(`/api/contacts/${userId}`);
@@ -345,7 +345,9 @@ export const useTelegramContacts = () => {
 
       // Если не получилось через Telegram WebApp, используем фиксированный ID для демонстрации
       if (!userId) {
-        userId = 427649895;
+        console.log('Telegram WebApp недоступен, используем демо-режим с фиксированным userId');
+        // Используем userId из db.json для демонстрации
+        throw new Error("UserID is not available");
       }
 
       const apiUrl = getApiUrl(`/api/contacts/${userId}`);
