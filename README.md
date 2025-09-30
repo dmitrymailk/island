@@ -1,3 +1,5 @@
+# Ссылка на бота https://t.me/ostrovok_friends_bot
+
 ### запуск фронтенда
 ```bash
 npm run dev
