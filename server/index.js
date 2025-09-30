@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
-import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -54,7 +53,6 @@ loadContactStore();
 
 // --- НАСТРОЙКА СЕРВЕРА EXPRESS ---
 const app = express();
-app.use(cors()); // Разрешаем CORS-запросы
 app.use(express.json()); // Для парсинга JSON-тел запросов
 
 // Middleware для логирования запросов
