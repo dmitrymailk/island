@@ -109,15 +109,43 @@ const TelegramTestMode: React.FC<TelegramTestModeProps> = ({
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-slate-900 mb-2 text-center">
-            Тестовый режим
+            {typeof window !== 'undefined' && window.Telegram?.WebApp?.platform === 'tdesktop'
+              ? 'Telegram Desktop'
+              : 'Тестовый режим'}
           </h3>
           <p className="text-slate-600 text-sm mb-4 text-center">
-            Telegram WebApp недоступен. Показываем демо-контакты для тестирования.
+            {typeof window !== 'undefined' && window.Telegram?.WebApp?.platform === 'tdesktop'
+              ? 'Вы используете Telegram Desktop. Импорт контактов недоступен в этой версии. Откройте приложение в мобильном Telegram для импорта контактов.'
+              : 'Telegram WebApp недоступен. Показываем демо-контакты для тестирования.'}
           </p>
-          <div className="text-xs text-slate-400 bg-slate-50 p-3 rounded-lg">
+          <div className="text-xs text-slate-500 bg-yellow-50 p-2 rounded-lg mb-4">
+            <p className="font-medium">Отладочная информация:</p>
+            <p>• window.Telegram: {typeof window !== 'undefined' && window.Telegram ? '✅' : '❌'}</p>
+            <p>• window.Telegram.WebApp: {typeof window !== 'undefined' && window.Telegram?.WebApp ? '✅' : '❌'}</p>
+            <p>• initData: {typeof window !== 'undefined' && window.Telegram?.WebApp?.initData ? `✅ (${window.Telegram.WebApp.initData.length} символов)` : '❌'}</p>
+            <p>• requestContacts: {typeof window !== 'undefined' && window.Telegram?.WebApp?.requestContacts ? '✅' : '❌'}</p>
+            <p>• showAlert: {typeof window !== 'undefined' && window.Telegram?.WebApp?.showAlert ? '✅' : '❌'}</p>
+            <p>• showConfirm: {typeof window !== 'undefined' && window.Telegram?.WebApp?.showConfirm ? '✅' : '❌'}</p>
+            <p>• version: {typeof window !== 'undefined' && window.Telegram?.WebApp?.version ? window.Telegram.WebApp.version : 'N/A'}</p>
+            <p>• platform: {typeof window !== 'undefined' && window.Telegram?.WebApp?.platform ? window.Telegram.WebApp.platform : 'N/A'}</p>
+            <p>• User Agent: {typeof window !== 'undefined' ? window.navigator.userAgent.substring(0, 50) + '...' : 'N/A'}</p>
+          </div>
+          <div className="text-xs text-slate-400 bg-slate-50 p-3 rounded-lg mb-4">
             <p>• В реальном Telegram WebApp здесь будут ваши контакты</p>
             <p>• Выберите контакты для добавления в друзья</p>
             <p>• Все данные остаются на вашем устройстве</p>
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={() => {
+                console.log('Force refresh Telegram WebApp check');
+                window.location.reload();
+              }}
+              className="text-xs text-cyan-600 hover:text-cyan-700 underline"
+            >
+              Обновить проверку Telegram WebApp
+            </button>
           </div>
         </div>
 

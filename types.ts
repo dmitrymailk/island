@@ -147,3 +147,132 @@ export interface VibeCornerItem {
   hotel: Hotel;
   likedBy: User[];
 }
+
+// --- Telegram API Types ---
+
+// Input types for Telegram API
+export interface InputPhoneContact {
+  client_id: number;
+  phone: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface InputUser {
+  user_id: number;
+  access_hash: number;
+}
+
+// Response types from Telegram API
+export interface ImportedContact {
+  user_id: number;
+  client_id: number;
+}
+
+export interface PopularContact {
+  client_id: number;
+  importers: number;
+}
+
+export interface ImportedContacts {
+  imported: ImportedContact[];
+  popular_invites: PopularContact[];
+  retry_contacts: number[];
+  users: TelegramUser[];
+}
+
+export interface TelegramUser {
+  id: number;
+  access_hash?: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  phone?: string;
+  photo?: TelegramUserProfilePhoto;
+  status?: TelegramUserStatus;
+  self?: boolean;
+  contact?: boolean;
+  mutual_contact?: boolean;
+  deleted?: boolean;
+  bot?: boolean;
+  verified?: boolean;
+  restricted?: boolean;
+  min?: boolean;
+  fake?: boolean;
+  premium?: boolean;
+  close_friend?: boolean;
+  contact_require_premium?: boolean;
+}
+
+export interface TelegramUserProfilePhoto {
+  has_video?: boolean;
+  photo_id: string;
+  stripped_thumb?: string;
+  dc_id: number;
+}
+
+export interface TelegramUserStatus {
+  _: 'userStatusEmpty' | 'userStatusOnline' | 'userStatusOffline' | 'userStatusRecently' | 'userStatusLastWeek' | 'userStatusLastMonth';
+  expires?: number;
+  was_online?: number;
+  by_me?: boolean;
+}
+
+export interface TelegramContact {
+  user_id: number;
+  mutual: boolean;
+}
+
+export interface TelegramContacts {
+  contacts: TelegramContact[];
+  saved_count: number;
+  users: TelegramUser[];
+}
+
+export interface SavedContact {
+  phone: string;
+  first_name: string;
+  last_name: string;
+  date: number;
+}
+
+export interface ContactStatus {
+  user_id: number;
+  status: TelegramUserStatus;
+}
+
+export interface TelegramPeer {
+  _: 'peerUser' | 'peerChat' | 'peerChannel';
+  user_id?: number;
+  chat_id?: number;
+  channel_id?: number;
+}
+
+export interface TelegramChat {
+  id: number;
+  title: string;
+  photo?: TelegramUserProfilePhoto;
+  participants_count: number;
+  date: number;
+  version: number;
+  left?: boolean;
+  kicked?: boolean;
+  admin_rights?: any;
+  default_banned_rights?: any;
+}
+
+export interface TelegramFound {
+  my_results: TelegramPeer[];
+  results: TelegramPeer[];
+  chats: TelegramChat[];
+  users: TelegramUser[];
+}
+
+// Extended contact types for our app
+export interface ContactWithTelegramData extends Friend {
+  telegramUser?: TelegramUser;
+  isOnline?: boolean;
+  lastSeen?: number;
+  mutualContact?: boolean;
+  canAddToContacts?: boolean;
+}

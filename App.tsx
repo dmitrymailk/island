@@ -46,6 +46,27 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Инициализация Telegram WebApp
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      console.log('Initializing Telegram WebApp...');
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+
+      // Логируем информацию о Telegram WebApp
+      console.log('Telegram WebApp initialized:', {
+        version: window.Telegram.WebApp.version,
+        platform: window.Telegram.WebApp.platform,
+        initData: window.Telegram.WebApp.initData,
+        initDataLength: window.Telegram.WebApp.initData?.length || 0,
+        isExpanded: window.Telegram.WebApp.isExpanded,
+        viewportHeight: window.Telegram.WebApp.viewportHeight,
+      });
+    } else {
+      console.log('Telegram WebApp not available');
+    }
+  }, []);
+
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 3000);
@@ -166,19 +187,17 @@ const App: React.FC = () => {
   const handleFriendsChange = (changedFriends: Friend[], action: 'add' | 'remove') => {
     if (action === 'add') {
       setFriends(prev => {
-        // Получаем существующие ID друзей
         const existingIds = new Set(prev.map(f => f.id));
-
-        // Фильтруем новых друзей, оставляя только тех, кого еще нет в списке
         const newFriends = changedFriends.filter(friend => !existingIds.has(friend.id));
 
-        if (newFriends.length > 0) {
-          setToast({ message: `${newFriends.length} друзей добавлено!`, type: 'success' });
-          return [...prev, ...newFriends];
-        } else {
-          setToast({ message: 'Все выбранные друзья уже добавлены.', type: 'info' });
+        if (newFriends.length === 0) {
+          setToast({ message: 'Все выбранные друзья уже в вашем списке.', type: 'info' });
           return prev;
         }
+
+        const friendWord = newFriends.length === 1 ? 'друг' : newFriends.length < 5 ? 'друга' : 'друзей';
+        setToast({ message: `${newFriends.length} ${friendWord} добавлено!`, type: 'success' });
+        return [...prev, ...newFriends];
       });
     } else if (action === 'remove') {
       const idsToRemove = new Set(changedFriends.map(f => f.id));
@@ -393,7 +412,7 @@ const App: React.FC = () => {
           <Route path="/wishlists" element={<WishlistsPage wishlists={wishlists} hotels={hotels} onCreateWishlist={handleCreateWishlist} />} />
           <Route path="/wishlist/:wishlistId" element={<WishlistDetailPage allWishlists={wishlists} allHotels={hotels} allFriends={friends} currentUser={currentUser} allUsers={MOCK_USERS_DATABASE} onShareWishlist={handleShareWishlist} />} />
           <Route path="/year-in-review" element={<YearSummaryPage user={currentUser} reviews={reviews} />} />
-          <Route path="/profile/:userId" element={<ProfilePage allUsers={MOCK_USERS_DATABASE} allReviews={reviews} allHotels={hotels} allFriends={friends} currentUser={currentUser} onFollow={handleFollow} />} />
+          <Route path="/profile/:userId" element={<ProfilePage allUsers={MOCK_USERS_DATABASE} allReviews={reviews} allHotels={hotels} allFriends={friends} currentUser={currentUser} onFollow={handleFollow} onFriendsChange={handleFriendsChange} />} />
         </Routes>
       </main>
       {showLevelUpModal && <LevelUpModal level={showLevelUpModal} onClose={() => setShowLevelUpModal(null)} />}

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import TelegramContactsImport from '../components/TelegramContactsImport';
+import { useTelegramContacts } from '../hooks/useTelegramContacts';
 import type { Friend } from '../types';
 import { getImagePropsSafe } from '../utils/imageUtils';
 
@@ -14,6 +15,7 @@ interface FriendsPageProps {
 const FriendsPage: React.FC<FriendsPageProps> = ({ friends, onFriendsChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showTelegramModal, setShowTelegramModal] = useState(false);
+  const { isTelegramWebApp } = useTelegramContacts();
 
   const filteredFriends = useMemo(() => {
     if (!searchQuery) {
@@ -43,15 +45,17 @@ const FriendsPage: React.FC<FriendsPageProps> = ({ friends, onFriendsChange }) =
           <p className="mt-2 text-slate-600">Люди, чьи рекомендации вы видите на сайте.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={() => setShowTelegramModal(true)}
-            className="shrink-0 inline-flex items-center px-4 py-2 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-            </svg>
-            Импорт из Telegram
-          </button>
+          {isTelegramWebApp && (
+            <button
+              onClick={() => setShowTelegramModal(true)}
+              className="shrink-0 inline-flex items-center px-4 py-2 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+              Импорт из Telegram
+            </button>
+          )}
           <Link
             to="/invite"
             className="shrink-0 inline-flex items-center px-4 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors"

@@ -7,11 +7,20 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist",
+    "server": "nodemon server/index.js"
   },
   "dependencies": {
     "@google/genai": "^1.21.0",
+    "@telegram-apps/sdk": "^3.11.5",
+    "@tma.js/bridge": "^2.0.2",
+    "@tma.js/sdk": "^2.7.0",
+    "@tma.js/types": "^1.0.0",
     "@twa-dev/sdk": "^8.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "node-telegram-bot-api": "^0.66.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.3",
@@ -21,6 +30,7 @@
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
     "gh-pages": "^6.1.1",
+    "nodemon": "^3.1.10",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

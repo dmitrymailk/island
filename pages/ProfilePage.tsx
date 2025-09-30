@@ -16,9 +16,10 @@ interface ProfilePageProps {
     allFriends: Friend[];
     currentUser: User;
     onFollow: (userId: string) => void;
+    onFriendsChange?: (friends: Friend[], action: 'add' | 'remove') => void;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({ allUsers, allReviews, allHotels, allFriends, currentUser, onFollow }) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ allUsers, allReviews, allHotels, allFriends, currentUser, onFollow, onFriendsChange }) => {
     const { userId } = useParams<{ userId: string }>();
     const user = userId ? allUsers[userId] : undefined;
 
@@ -55,31 +56,30 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ allUsers, allReviews, allHote
     return (
         <div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-              <div>
-                  <h1 className="text-3xl font-bold text-slate-900">Профиль: {user.name}</h1>
-                  <p className="mt-2 text-slate-600">История путешествий и достижения этого пользователя.</p>
-              </div>
-              {!isOwnProfile && (
-                  <button
-                    onClick={() => onFollow(user.id)}
-                    className={`shrink-0 px-5 py-2 rounded-lg font-semibold transition-colors ${
-                        isFollowing
-                        ? 'bg-slate-200 text-slate-800 hover:bg-slate-300'
-                        : 'bg-cyan-600 text-white hover:bg-cyan-700'
-                    }`}
-                  >
-                    {isFollowing ? 'Отписаться' : 'Подписаться'}
-                  </button>
-              )}
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900">Профиль: {user.name}</h1>
+                    <p className="mt-2 text-slate-600">История путешествий и достижения этого пользователя.</p>
+                </div>
+                {!isOwnProfile && (
+                    <button
+                        onClick={() => onFollow(user.id)}
+                        className={`shrink-0 px-5 py-2 rounded-lg font-semibold transition-colors ${isFollowing
+                            ? 'bg-slate-200 text-slate-800 hover:bg-slate-300'
+                            : 'bg-cyan-600 text-white hover:bg-cyan-700'
+                            }`}
+                    >
+                        {isFollowing ? 'Отписаться' : 'Подписаться'}
+                    </button>
+                )}
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column */}
                 <div className="lg:col-span-2 space-y-6">
                     <Card className="p-6">
                         <ProfileHeader user={user} />
                     </Card>
-                    <TravelHistoryWidget 
+                    <TravelHistoryWidget
                         user={user}
                         allReviews={allReviews}
                         allHotels={allHotels}
@@ -89,15 +89,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ allUsers, allReviews, allHote
 
                 {/* Right Column */}
                 <div className="space-y-6">
-                     <PublicLikesWidget 
+                    <PublicLikesWidget
                         discoverHistory={user.discoverHistory}
                         allHotels={allHotels}
-                     />
-                     <Card className="p-6">
-                        <FriendsWidget friends={friendsToShow} userId={user.id} isOwnProfile={isOwnProfile} />
-                     </Card>
-                     <Card className="p-6">
-                       <AchievementsWidget achievements={user.achievements} userId={user.id} />
+                    />
+                    <Card className="p-6">
+                        <FriendsWidget
+                            friends={friendsToShow}
+                            userId={user.id}
+                            isOwnProfile={isOwnProfile}
+                            onFriendsChange={onFriendsChange}
+                        />
+                    </Card>
+                    <Card className="p-6">
+                        <AchievementsWidget achievements={user.achievements} userId={user.id} />
                     </Card>
                     <Card className="p-6">
                         <StampCollectionWidget visitedLocations={user.visitedLocations} />
