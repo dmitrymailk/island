@@ -37,7 +37,7 @@ jobs:
       - name: Build with Vite
         env:
           # IP адрес сервера Telegram бота
-          VITE_TELEGRAM_SERVER_URL: http://147.45.213.244
+          VITE_TELEGRAM_SERVER_URL: https://147.45.213.244
         run: npm run build
 
       - name: Upload artifact

@@ -1,14 +1,25 @@
-# Environment variables
-.env
-.env.local
+# SSL сертификаты и приватные ключи
+ssl/*.pem
+ssl/*.key
+ssl/*.crt
 
-# Database
+# База данных
 db.json
 
-# Logs
+# Node modules (если запускаете без Docker)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Логи
 *.log
 npm-debug.log*
-logs/
+yarn-debug.log*
+yarn-error.log*
 
-# Dependencies
-node_modules/
+# OS files
+.DS_Store
+Thumbs.db
