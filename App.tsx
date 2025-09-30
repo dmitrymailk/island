@@ -22,6 +22,7 @@ import Toast from './components/ui/Toast';
 import { useMockData } from './hooks/useMockData';
 import type { Review, Friend, User, Wishlist, Transaction, Challenge, DiscoverItem, Hotel, VibeCornerItem } from './types';
 import { getRecommendations, LEVELS, MOCK_WISHLISTS, MOCK_USERS_DATABASE, TRANSACTIONS, ACTIVE_CHALLENGES, ALL_BADGES } from './constants';
+import { preloadCriticalImages } from './utils/imageUtils';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -37,7 +38,7 @@ const App: React.FC = () => {
 
 
   const { allReviews: initialReviews, friends: initialFriends, hotels, loading: dataLoading } = useMockData();
-  
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -61,25 +62,32 @@ const App: React.FC = () => {
       setWishlists(MOCK_WISHLISTS);
       setTransactions(TRANSACTIONS);
       setChallenges(ACTIVE_CHALLENGES);
+
+      // Предзагрузка критически важных изображений для Telegram Web Apps
+      if (hotels.length > 0 && initialReviews.length > 0) {
+        preloadCriticalImages(hotels, initialReviews).catch(error => {
+          console.warn('Failed to preload critical images:', error);
+        });
+      }
     }
-  }, [dataLoading, initialReviews, initialFriends]);
+  }, [dataLoading, initialReviews, initialFriends, hotels]);
 
   const recommendations = useMemo(() => {
     if (!friends.length || !hotels.length) return [];
-    
+
     // Recommendations should also include public posts from followed experts
     const friendIds = new Set(friends.map(f => f.id));
     const followedIds = new Set(currentUser?.following || []);
 
     const relevantReviews = reviews.filter(review => {
-        if (review.status !== 'approved') return false;
-        // It's a private review from a friend
-        if (!review.isPublic && friendIds.has(review.friendId)) return true;
-        // It's a public review from someone I follow who is an expert
-        const author = MOCK_USERS_DATABASE[review.friendId];
-        if (review.isPublic && author?.isExpert && followedIds.has(review.friendId)) return true;
+      if (review.status !== 'approved') return false;
+      // It's a private review from a friend
+      if (!review.isPublic && friendIds.has(review.friendId)) return true;
+      // It's a public review from someone I follow who is an expert
+      const author = MOCK_USERS_DATABASE[review.friendId];
+      if (review.isPublic && author?.isExpert && followedIds.has(review.friendId)) return true;
 
-        return false;
+      return false;
     });
 
     const recs = getRecommendations(relevantReviews, hotels, friends);
@@ -98,43 +106,43 @@ const App: React.FC = () => {
 
   const vibeCornerFeed = useMemo((): VibeCornerItem[] => {
     if (!currentUser || currentUser.following.length === 0) return [];
-    
+
     const likedByFollowed: Record<string, User[]> = {};
-    
+
     currentUser.following.forEach(followedId => {
-        const followedUser = MOCK_USERS_DATABASE[followedId];
-        if (followedUser && followedUser.discoverHistory) {
-            followedUser.discoverHistory
-                .filter(action => action.action === 'like')
-                .forEach(({ hotelId }) => {
-                    if (!likedByFollowed[hotelId]) {
-                        likedByFollowed[hotelId] = [];
-                    }
-                    if (!likedByFollowed[hotelId].some(u => u.id === followedUser.id)) {
-                        likedByFollowed[hotelId].push(followedUser);
-                    }
-                });
-        }
+      const followedUser = MOCK_USERS_DATABASE[followedId];
+      if (followedUser && followedUser.discoverHistory) {
+        followedUser.discoverHistory
+          .filter(action => action.action === 'like')
+          .forEach(({ hotelId }) => {
+            if (!likedByFollowed[hotelId]) {
+              likedByFollowed[hotelId] = [];
+            }
+            if (!likedByFollowed[hotelId].some(u => u.id === followedUser.id)) {
+              likedByFollowed[hotelId].push(followedUser);
+            }
+          });
+      }
     });
 
     const feed = Object.entries(likedByFollowed)
-        .map(([hotelId, users]) => {
-            const hotel = hotels.find(h => h.id === hotelId);
-            return hotel ? { hotel, likedBy: users } : null;
-        })
-        .filter((item): item is VibeCornerItem => !!item);
-    
+      .map(([hotelId, users]) => {
+        const hotel = hotels.find(h => h.id === hotelId);
+        return hotel ? { hotel, likedBy: users } : null;
+      })
+      .filter((item): item is VibeCornerItem => !!item);
+
     for (let i = feed.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [feed[i], feed[j]] = [feed[j], feed[i]];
+      const j = Math.floor(Math.random() * (i + 1));
+      [feed[i], feed[j]] = [feed[j], feed[i]];
     }
 
     return feed;
   }, [currentUser, hotels]);
-  
+
   const addXp = (amount: number, newBadgeIds: string[] = []) => {
     if (!currentUser) return;
-    
+
     const updatedUser = { ...currentUser };
     updatedUser.xp += amount;
     updatedUser.achievements = [...new Set([...updatedUser.achievements, ...newBadgeIds])];
@@ -146,7 +154,7 @@ const App: React.FC = () => {
       updatedUser.level = nextLevel.level;
       setShowLevelUpModal(nextLevel.level);
     }
-    
+
     MOCK_USERS_DATABASE[currentUser.id] = updatedUser;
     setCurrentUser(updatedUser);
   };
@@ -156,14 +164,27 @@ const App: React.FC = () => {
   };
 
   const handleFriendsChange = (changedFriends: Friend[], action: 'add' | 'remove') => {
-      if (action === 'add') {
-          setFriends(prev => [...prev, ...changedFriends]);
-          setToast({ message: `${changedFriends.length} друзей добавлено!`, type: 'success' });
-      } else if (action === 'remove') {
-          const idsToRemove = new Set(changedFriends.map(f => f.id));
-          setFriends(prev => prev.filter(f => !idsToRemove.has(f.id)));
-          setToast({ message: 'Друг удален.', type: 'success' });
-      }
+    if (action === 'add') {
+      setFriends(prev => {
+        // Получаем существующие ID друзей
+        const existingIds = new Set(prev.map(f => f.id));
+
+        // Фильтруем новых друзей, оставляя только тех, кого еще нет в списке
+        const newFriends = changedFriends.filter(friend => !existingIds.has(friend.id));
+
+        if (newFriends.length > 0) {
+          setToast({ message: `${newFriends.length} друзей добавлено!`, type: 'success' });
+          return [...prev, ...newFriends];
+        } else {
+          setToast({ message: 'Все выбранные друзья уже добавлены.', type: 'info' });
+          return prev;
+        }
+      });
+    } else if (action === 'remove') {
+      const idsToRemove = new Set(changedFriends.map(f => f.id));
+      setFriends(prev => prev.filter(f => !idsToRemove.has(f.id)));
+      setToast({ message: 'Друг удален.', type: 'success' });
+    }
   };
 
   const handleReviewSubmit = (reviewData: Omit<Review, 'id' | 'friendId' | 'date' | 'status'>) => {
@@ -179,7 +200,7 @@ const App: React.FC = () => {
     const updatedReviews = [newReview, ...reviews];
     setReviews(updatedReviews);
     setToast({ message: 'Отзыв отправлен на модерацию!', type: 'success' });
-    
+
     let xpGained = 100;
     // Double XP for public reviews from experts
     if (currentUser.isExpert && reviewData.isPublic) {
@@ -195,7 +216,7 @@ const App: React.FC = () => {
     // Trigger "Become Expert" modal
     const userReviewsCount = updatedReviews.filter(r => r.friendId === currentUser.id).length;
     if (userReviewsCount >= 3 && !currentUser.isExpert) {
-        setShowExpertModal(true);
+      setShowExpertModal(true);
     }
     navigate('/profile'); // Redirect to profile after submission to see rewards
   };
@@ -224,7 +245,7 @@ const App: React.FC = () => {
     setCurrentUser(prev => prev ? ({ ...prev, miles: prev.miles - amount }) : null);
     setToast({ message: `Вы потратили ${amount} миль!`, type: 'success' });
   };
-  
+
   const handleAddToWishlist = (hotelId: string, wishlistId: string) => {
     setWishlists(prev => prev.map(w => {
       if (w.id === wishlistId && !w.hotelIds.includes(hotelId)) {
@@ -247,25 +268,25 @@ const App: React.FC = () => {
     setWishlists(prev => [...prev, newWishlist]);
     setToast({ message: `Вишлист "${name}" создан!`, type: 'success' });
   };
-  
-    const handleShareWishlist = (wishlistId: string, friendIds: string[]) => {
-        setWishlists(prev =>
-        prev.map(w => {
-            if (w.id === wishlistId) {
-            const newFriendIds = [...new Set([...w.friendIds, ...friendIds])];
-            return { ...w, friendIds: newFriendIds };
-            }
-            return w;
-        })
-        );
-        const friendCount = friendIds.length;
-        const message = friendCount === 1 
-            ? '1 друг добавлен в вишлист!' 
-            : friendCount > 1 && friendCount < 5 
-                ? `${friendCount} друга добавлено в вишлист!`
-                : `${friendCount} друзей добавлено в вишлист!`;
-        setToast({ message, type: 'success' });
-    };
+
+  const handleShareWishlist = (wishlistId: string, friendIds: string[]) => {
+    setWishlists(prev =>
+      prev.map(w => {
+        if (w.id === wishlistId) {
+          const newFriendIds = [...new Set([...w.friendIds, ...friendIds])];
+          return { ...w, friendIds: newFriendIds };
+        }
+        return w;
+      })
+    );
+    const friendCount = friendIds.length;
+    const message = friendCount === 1
+      ? '1 друг добавлен в вишлист!'
+      : friendCount > 1 && friendCount < 5
+        ? `${friendCount} друга добавлено в вишлист!`
+        : `${friendCount} друзей добавлено в вишлист!`;
+    setToast({ message, type: 'success' });
+  };
 
   const handleDiscoverAction = (item: DiscoverItem, action: 'like' | 'dislike') => {
     if (!currentUser) return;
@@ -283,38 +304,38 @@ const App: React.FC = () => {
 
     const discovererBadge = ALL_BADGES.find(b => b.id === 'b8')!;
     if (newActionCount >= 50 && !updatedUser.achievements.includes('b8')) {
-        newAchievements.push('b8');
-        xpGained += 100;
-        setToast({ message: `Новое достижение: ${discovererBadge.name}!`, type: 'success' });
+      newAchievements.push('b8');
+      xpGained += 100;
+      setToast({ message: `Новое достижение: ${discovererBadge.name}!`, type: 'success' });
     }
 
     if (action !== 'dislike' && item.type === 'hotel') {
-        const discoverWishlistId = 'discover_wishlist';
-        let newWishlists = [...wishlists];
-        let discoverWishlist = newWishlists.find(w => w.id === discoverWishlistId);
+      const discoverWishlistId = 'discover_wishlist';
+      let newWishlists = [...wishlists];
+      let discoverWishlist = newWishlists.find(w => w.id === discoverWishlistId);
 
-        if (!discoverWishlist) {
-            discoverWishlist = {
-                id: discoverWishlistId,
-                name: 'Мои Находки',
-                ownerId: currentUser.id,
-                hotelIds: [],
-                friendIds: [],
-            };
-            newWishlists.push(discoverWishlist);
-        }
+      if (!discoverWishlist) {
+        discoverWishlist = {
+          id: discoverWishlistId,
+          name: 'Мои Находки',
+          ownerId: currentUser.id,
+          hotelIds: [],
+          friendIds: [],
+        };
+        newWishlists.push(discoverWishlist);
+      }
 
-        if (!discoverWishlist.hotelIds.includes(item.hotel.id)) {
-            discoverWishlist.hotelIds.push(item.hotel.id);
-        }
-        setWishlists(newWishlists);
-        
-        const collectorBadge = ALL_BADGES.find(b => b.id === 'b9')!;
-        if (discoverWishlist.hotelIds.length >= 10 && !updatedUser.achievements.includes('b9')) {
-            newAchievements.push('b9');
-            xpGained += 150;
-            setToast({ message: `Новое достижение: ${collectorBadge.name}!`, type: 'success' });
-        }
+      if (!discoverWishlist.hotelIds.includes(item.hotel.id)) {
+        discoverWishlist.hotelIds.push(item.hotel.id);
+      }
+      setWishlists(newWishlists);
+
+      const collectorBadge = ALL_BADGES.find(b => b.id === 'b9')!;
+      if (discoverWishlist.hotelIds.length >= 10 && !updatedUser.achievements.includes('b9')) {
+        newAchievements.push('b9');
+        xpGained += 150;
+        setToast({ message: `Новое достижение: ${collectorBadge.name}!`, type: 'success' });
+      }
     }
 
     updatedUser.xp += xpGained;
@@ -326,7 +347,7 @@ const App: React.FC = () => {
       updatedUser.level = nextLevel.level;
       setShowLevelUpModal(nextLevel.level);
     }
-    
+
     MOCK_USERS_DATABASE[currentUser.id] = updatedUser;
     setCurrentUser(updatedUser);
   };
@@ -340,7 +361,7 @@ const App: React.FC = () => {
       : [...currentUser.following, userIdToFollow];
 
     const updatedUser = { ...currentUser, following: updatedFollowing };
-    
+
     MOCK_USERS_DATABASE[currentUser.id] = updatedUser;
     setCurrentUser(updatedUser);
 
@@ -365,7 +386,7 @@ const App: React.FC = () => {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/hotel/:hotelId" element={<HotelPage hotels={hotels} reviews={reviews} friends={friends} user={currentUser} wishlists={wishlists} onSpendMiles={handleSpendMiles} onAddToWishlist={handleAddToWishlist} allUsers={MOCK_USERS_DATABASE} />} />
           <Route path="/friends" element={<FriendsPage friends={friends} onFriendsChange={handleFriendsChange} />} />
-          <Route path="/invite" element={<InvitePage onFriendsChange={handleFriendsChange} />} />
+          <Route path="/invite" element={<InvitePage onFriendsChange={handleFriendsChange} existingFriends={friends} />} />
           <Route path="/submit-review/:hotelId" element={<SubmitReviewPage hotels={hotels} onSubmit={handleReviewSubmit} currentUser={currentUser} />} />
           <Route path="/profile" element={<PassportPage user={currentUser} transactions={transactions} friends={friends} challenges={challenges} onGiftMiles={handleSpendMiles} allReviews={reviews} allHotels={hotels} />} />
           <Route path="/achievements/:userId" element={<AchievementsPage allUsers={MOCK_USERS_DATABASE} currentUser={currentUser} />} />

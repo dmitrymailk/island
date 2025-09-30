@@ -4,6 +4,7 @@ import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import TelegramContactsImport from '../components/TelegramContactsImport';
 import type { Friend } from '../types';
+import { getImagePropsSafe } from '../utils/imageUtils';
 
 interface FriendsPageProps {
   friends: Friend[];
@@ -78,7 +79,10 @@ const FriendsPage: React.FC<FriendsPageProps> = ({ friends, onFriendsChange }) =
           {filteredFriends.map(friend => (
             <div key={friend.id} className="group relative">
               <Link to={`/profile/${friend.id}`} className="block text-center p-2 rounded-lg hover:bg-slate-50 transition-colors">
-                <img className="h-24 w-24 rounded-full mx-auto shadow-lg group-hover:shadow-xl transition-shadow" src={friend.avatarUrl} alt={friend.name} />
+                <img
+                  className="h-24 w-24 rounded-full mx-auto shadow-lg group-hover:shadow-xl transition-shadow"
+                  {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+                />
                 <p className="mt-2 text-sm font-semibold text-slate-800">{friend.name}</p>
                 <p className="text-xs text-slate-500 capitalize">{friend.source}</p>
               </Link>
@@ -111,6 +115,7 @@ const FriendsPage: React.FC<FriendsPageProps> = ({ friends, onFriendsChange }) =
         <TelegramContactsImport
           onContactsImported={handleTelegramContactsImported}
           onClose={() => setShowTelegramModal(false)}
+          existingFriends={friends}
         />
       </Modal>
     </div>

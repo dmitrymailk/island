@@ -9,6 +9,18 @@ import App from './App';
 if (typeof window !== 'undefined' && WebApp.initDataUnsafe?.user) {
   WebApp.ready();
   WebApp.expand();
+
+  // Настройки для лучшего отображения изображений в Telegram Web Apps
+  if (WebApp.platform === 'ios' || WebApp.platform === 'android') {
+    // Включаем поддержку изображений на мобильных устройствах
+    WebApp.enableClosingConfirmation();
+
+    // Настройки для стабильной работы с изображениями
+    const meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+    document.head.appendChild(meta);
+  }
 }
 
 const rootElement = document.getElementById('root');

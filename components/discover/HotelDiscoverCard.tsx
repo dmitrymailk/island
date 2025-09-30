@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { DiscoverItem } from '../../types';
+import { getImagePropsSafe } from '../../utils/imageUtils';
 
 interface HotelDiscoverCardProps {
     item: Extract<DiscoverItem, { type: 'hotel' }>;
@@ -8,24 +9,30 @@ interface HotelDiscoverCardProps {
 }
 
 const SliderReviewContent: React.FC<{
-    item: Extract<DiscoverItem['sliderContent'][number], {type: 'review'}>;
+    item: Extract<DiscoverItem['sliderContent'][number], { type: 'review' }>;
     hotelImageUrl: string;
-}> = ({item, hotelImageUrl}) => {
+}> = ({ item, hotelImageUrl }) => {
     const { review, friend } = item;
     const impactfulText = review.lifehack || review.pros;
 
     return (
         <div className="w-full h-full relative flex flex-col p-6 justify-center items-center text-center">
-             <img src={review.photos[0] || hotelImageUrl} className="absolute top-0 left-0 w-full h-full object-cover scale-125 blur-md" alt="Review background" />
+            <img
+                className="absolute top-0 left-0 w-full h-full object-cover scale-125 blur-md"
+                {...getImagePropsSafe(review.photos[0] || hotelImageUrl, "Review background")}
+            />
             <div className="absolute top-0 left-0 w-full h-full bg-black/40"></div>
-            
+
             <div className="relative z-10 text-white">
                 <div className="text-6xl opacity-30 leading-none font-serif">“</div>
                 <p className="text-xl font-semibold -mt-8 shadow-black/50 [text-shadow:_0_2px_4px_var(--tw-shadow-color)]">
                     {impactfulText}
                 </p>
                 <div className="mt-6 flex items-center justify-center space-x-3">
-                    <img src={friend.avatarUrl} alt={friend.name} className="w-12 h-12 rounded-full border-2 border-white/50" />
+                    <img
+                        className="w-12 h-12 rounded-full border-2 border-white/50"
+                        {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+                    />
                     <div>
                         <p className="font-bold">{friend.name}</p>
                         <p className="text-sm opacity-80">{review.tripTags.join(', ')}</p>
@@ -69,7 +76,7 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
     }, [isTopCard, isPaused, sliderContent.length]);
 
     useEffect(() => {
-        if(sliderContent[currentIndex].type === 'video' && videoRef.current) {
+        if (sliderContent[currentIndex].type === 'video' && videoRef.current) {
             videoRef.current.currentTime = 0;
             videoRef.current.play().catch(error => console.log("Autoplay was prevented:", error));
         }
@@ -87,7 +94,7 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
     const currentSlide = sliderContent[currentIndex];
 
     return (
-        <div 
+        <div
             className="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden relative flex flex-col select-none"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
@@ -96,10 +103,10 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
             <div className="absolute top-2 left-2 right-2 z-20 flex items-center space-x-1">
                 {sliderContent.map((_, index) => (
                     <div key={index} className="flex-1 h-1 bg-white/40 rounded-full overflow-hidden">
-                        <div 
+                        <div
                             className="h-1 bg-white rounded-full"
-                            style={{ 
-                                animation: index === currentIndex && !isPaused && isTopCard ? `progress-anim 4s linear forwards` : 'none', 
+                            style={{
+                                animation: index === currentIndex && !isPaused && isTopCard ? `progress-anim 4s linear forwards` : 'none',
                                 width: index < currentIndex ? '100%' : '0%',
                             }}
                             onAnimationEnd={(e) => e.stopPropagation()}
@@ -107,7 +114,7 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
                     </div>
                 ))}
             </div>
-             <button
+            <button
                 onClick={handleShareClick}
                 className="absolute top-2.5 right-2.5 z-30 p-2 bg-black/30 backdrop-blur-sm rounded-full text-white hover:bg-black/50 transition-colors"
                 title="Поделиться"
@@ -120,7 +127,7 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
 
             {/* Content */}
             <div className="flex-grow relative">
-                {currentSlide.type === 'photo' && <img src={currentSlide.url} alt={hotel.name} className="absolute top-0 left-0 w-full h-full object-cover" />}
+                {currentSlide.type === 'photo' && <img className="absolute top-0 left-0 w-full h-full object-cover" {...getImagePropsSafe(currentSlide.url, hotel.name)} />}
                 {currentSlide.type === 'video' && <video ref={videoRef} src={currentSlide.url} className="absolute top-0 left-0 w-full h-full object-cover" autoPlay muted loop playsInline />}
                 {currentSlide.type === 'review' && <SliderReviewContent item={currentSlide} hotelImageUrl={hotel.imageUrl} />}
             </div>
@@ -129,13 +136,13 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-full p-5 z-10 text-white pointer-events-none">
                 {recommendedBy && (
-                     <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white font-semibold px-3 py-1.5 rounded-full text-sm mb-2">
+                    <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm text-white font-semibold px-3 py-1.5 rounded-full text-sm mb-2">
                         <span>⭐️</span>
                         <span>Рекомендует {recommendedBy.name.split(' ')[0]}</span>
                     </div>
                 )}
                 <h2 className="text-2xl font-bold leading-tight shadow-black/50 [text-shadow:_0_2px_4px_var(--tw-shadow-color)]">{hotel.name}</h2>
-                 <div className="mt-2 text-xl font-bold">{hotel.pricePerNight.toLocaleString('ru-RU')} ₽ <span className="text-sm opacity-80 font-normal">/ ночь</span></div>
+                <div className="mt-2 text-xl font-bold">{hotel.pricePerNight.toLocaleString('ru-RU')} ₽ <span className="text-sm opacity-80 font-normal">/ ночь</span></div>
             </div>
 
             {/* Navigation controls */}

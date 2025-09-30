@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { Wishlist, Hotel, Friend, User } from '../types';
 import Card from '../components/ui/Card';
+import { getImagePropsSafe } from '../utils/imageUtils';
 import ShareWishlistModal from '../components/wishlist/ShareWishlistModal';
 
 interface WishlistDetailPageProps {
@@ -17,7 +18,7 @@ const WishlistDetailPage: React.FC<WishlistDetailPageProps> = ({ allWishlists, a
     const { wishlistId } = useParams<{ wishlistId: string }>();
     const [isShareModalOpen, setShareModalOpen] = useState(false);
     const wishlist = allWishlists.find(w => w.id === wishlistId);
-    
+
     if (!wishlist) {
         return (
             <div className="text-center py-16">
@@ -26,13 +27,13 @@ const WishlistDetailPage: React.FC<WishlistDetailPageProps> = ({ allWishlists, a
             </div>
         );
     }
-    
+
     const owner = allUsers[wishlist.ownerId];
     const members = [owner, ...wishlist.friendIds.map(id => allUsers[id])].filter((m): m is User => !!m);
     const isOwner = currentUser.id === wishlist.ownerId;
-    
+
     const hotelsInWishlist = allHotels.filter(h => wishlist.hotelIds.includes(h.id));
-    
+
     const handleShare = (friendIds: string[]) => {
         onShareWishlist(wishlist.id, friendIds);
     };
@@ -49,24 +50,23 @@ const WishlistDetailPage: React.FC<WishlistDetailPageProps> = ({ allWishlists, a
             )}
             <div className="mb-6">
                 <Link to="/wishlists" className="inline-flex items-center text-cyan-600 hover:text-cyan-800 transition-colors font-medium">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Назад ко всем вишлистам
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Назад ко всем вишлистам
                 </Link>
             </div>
 
             <div className="mb-8 flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900">{wishlist.name}</h1>
-                     <div className="mt-2 flex items-center">
+                    <div className="mt-2 flex items-center">
                         <div className="flex -space-x-2">
                             {members.slice(0, 5).map(member => (
                                 <img
                                     key={member.id}
-                                    src={member.avatarUrl}
-                                    alt={member.name}
                                     title={member.name}
+                                    {...getImagePropsSafe(member.avatarUrl, member.name)}
                                     className="w-8 h-8 rounded-full border-2 border-white"
                                 />
                             ))}
@@ -81,9 +81,9 @@ const WishlistDetailPage: React.FC<WishlistDetailPageProps> = ({ allWishlists, a
                         onClick={() => setShareModalOpen(true)}
                         className="inline-flex items-center px-4 py-2 bg-cyan-100 text-cyan-800 font-semibold rounded-lg hover:bg-cyan-200 transition-colors"
                     >
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 11a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1v-1z" />
-                         </svg>
+                        </svg>
                         Пригласить
                     </button>
                 )}

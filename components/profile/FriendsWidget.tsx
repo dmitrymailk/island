@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Friend } from '../../types';
+import { getImagePropsSafe } from '../../utils/imageUtils';
 
 interface FriendsWidgetProps {
   friends: Friend[];
@@ -20,7 +21,10 @@ const FriendsWidget: React.FC<FriendsWidgetProps> = ({ friends, userId, isOwnPro
         <div className="grid grid-cols-4 gap-3">
           {friendsPreview.map(friend => (
             <Link key={friend.id} to={`/profile/${friend.id}`} title={friend.name} className="block">
-              <img src={friend.avatarUrl} alt={friend.name} className="w-full aspect-square rounded-full object-cover transition-transform hover:scale-105" />
+              <img
+                className="w-full aspect-square rounded-full object-cover transition-transform hover:scale-105"
+                {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+              />
             </Link>
           ))}
         </div>

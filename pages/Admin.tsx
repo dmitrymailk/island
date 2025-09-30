@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Review, Friend, Hotel } from '../types';
 import Card from '../components/ui/Card';
+import { getImagePropsSafe } from '../utils/imageUtils';
 
 const statusClasses = {
   approved: 'bg-green-100 text-green-800',
@@ -37,15 +38,14 @@ const Admin: React.FC<AdminProps> = ({ reviews, friends, hotels, onStatusChange,
   if (loading) {
     return <div>Загрузка панели администратора...</div>;
   }
-  
+
   const FilterButton: React.FC<{ status: StatusFilter, text: string }> = ({ status, text }) => (
     <button
       onClick={() => setFilter(status)}
-      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-        filter === status
+      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${filter === status
           ? 'bg-cyan-600 text-white'
           : 'bg-white text-slate-600 hover:bg-slate-100'
-      }`}
+        }`}
     >
       {text}
     </button>
@@ -86,7 +86,10 @@ const Admin: React.FC<AdminProps> = ({ reviews, friends, hotels, onStatusChange,
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <img className="h-10 w-10 rounded-full" src={friend?.avatarUrl} alt={friend?.name} />
+                          <img
+                            className="h-10 w-10 rounded-full"
+                            {...getImagePropsSafe(friend?.avatarUrl || '', friend?.name || '')}
+                          />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-slate-900">{friend?.name}</div>
@@ -103,9 +106,9 @@ const Admin: React.FC<AdminProps> = ({ reviews, friends, hotels, onStatusChange,
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                       {review.status !== 'approved' && <button onClick={() => onStatusChange(review.id, 'approved')} className="text-green-600 hover:text-green-900">Одобрить</button>}
-                       {review.status !== 'rejected' && <button onClick={() => onStatusChange(review.id, 'rejected')} className="text-red-600 hover:text-red-900">Отклонить</button>}
-                       {review.status !== 'pending' && <button onClick={() => onStatusChange(review.id, 'pending')} className="text-yellow-600 hover:text-yellow-900">В ожидание</button>}
+                      {review.status !== 'approved' && <button onClick={() => onStatusChange(review.id, 'approved')} className="text-green-600 hover:text-green-900">Одобрить</button>}
+                      {review.status !== 'rejected' && <button onClick={() => onStatusChange(review.id, 'rejected')} className="text-red-600 hover:text-red-900">Отклонить</button>}
+                      {review.status !== 'pending' && <button onClick={() => onStatusChange(review.id, 'pending')} className="text-yellow-600 hover:text-yellow-900">В ожидание</button>}
                     </td>
                   </tr>
                 );

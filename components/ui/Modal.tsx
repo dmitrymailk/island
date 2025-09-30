@@ -4,16 +4,19 @@ interface ModalProps {
   children: React.ReactNode;
   title: string;
   onClose: () => void;
+  isOpen: boolean;
   size?: 'md' | 'lg' | 'xl';
 }
 
 const sizeClasses = {
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-3xl',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-3xl',
 };
 
-const Modal: React.FC<ModalProps> = ({ children, title, onClose, size = 'md' }) => {
+const Modal: React.FC<ModalProps> = ({ children, title, onClose, isOpen, size = 'md' }) => {
+  if (!isOpen) return null;
+
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"

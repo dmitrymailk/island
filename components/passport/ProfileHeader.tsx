@@ -1,6 +1,7 @@
 import React from 'react';
 import type { User } from '../../types';
 import { LEVELS } from '../../constants';
+import { getImagePropsSafe } from '../../utils/imageUtils';
 
 interface ProfileHeaderProps {
   user: User;
@@ -16,7 +17,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
 
   return (
     <div className="flex flex-col sm:flex-row items-center sm:space-x-6">
-      <img src={user.avatarUrl} alt={user.name} className="w-24 h-24 rounded-full border-4 border-white shadow-lg" />
+      <img
+        className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
+        {...getImagePropsSafe(user.avatarUrl, user.name)}
+      />
       <div className="flex-1 mt-4 sm:mt-0 text-center sm:text-left">
         <h2 className="text-2xl font-bold text-slate-800">{user.name}</h2>
         <p className="text-cyan-600 font-semibold">{currentLevel.name}</p>
@@ -35,7 +39,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user }) => {
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
-           {nextLevel && (
+          {nextLevel && (
             <p className="text-xs text-slate-400 mt-1">
               Еще {nextLevel.xpThreshold - user.xp} XP до уровня «{nextLevel.name}»
             </p>

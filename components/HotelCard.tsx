@@ -4,22 +4,23 @@ import type { Recommendation, User } from '../types';
 import Card from './ui/Card';
 import Rating from './ui/Rating';
 import { MOCK_USERS_DATABASE } from '../constants';
+import { getImagePropsSafe } from '../utils/imageUtils';
 
 interface HotelCardProps {
-  recommendation: Recommendation;
-  currentUser: User;
-  allUsers: Record<string, User>;
+    recommendation: Recommendation;
+    currentUser: User;
+    allUsers: Record<string, User>;
 }
 
 const RecommendationModal: React.FC<{ reviews: Recommendation['reviews']; onClose: () => void, allUsers: Record<string, User> }> = ({ reviews, onClose, allUsers }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={onClose}>
             <div className="bg-white rounded-lg shadow-xl max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-                 <div className="p-4 border-b flex justify-between items-center">
+                <div className="p-4 border-b flex justify-between items-center">
                     <h4 className="font-bold text-gray-900">Отзывы вашего круга:</h4>
                     <button onClick={onClose} className="text-slate-500 hover:text-slate-800">&times;</button>
-                 </div>
-                 <div className="p-4 max-h-80 overflow-y-auto">
+                </div>
+                <div className="p-4 max-h-80 overflow-y-auto">
                     <ul className="space-y-4">
                         {reviews.map(({ friend, review }) => {
                             const author = allUsers[friend.id];
@@ -28,7 +29,10 @@ const RecommendationModal: React.FC<{ reviews: Recommendation['reviews']; onClos
                             return (
                                 <li key={friend.id}>
                                     <div className="flex items-start space-x-3 group">
-                                        <img className={`h-10 w-10 rounded-full ${!isPublicExpert ? 'grayscale' : ''}`} src={friend.avatarUrl} alt={friend.name} />
+                                        <img
+                                            className={`h-10 w-10 rounded-full ${!isPublicExpert ? 'grayscale' : ''}`}
+                                            {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+                                        />
                                         <div>
                                             <p className="text-sm font-semibold text-gray-900">{isPublicExpert ? friend.name : 'Кто-то из вашего круга'}</p>
                                             <p className="text-xs text-slate-600 italic">"{review.pros}"</p>
@@ -38,7 +42,7 @@ const RecommendationModal: React.FC<{ reviews: Recommendation['reviews']; onClos
                             );
                         })}
                     </ul>
-                 </div>
+                </div>
             </div>
         </div>
     );
@@ -85,7 +89,10 @@ const RecommendationBadge: React.FC<{ reviews: Recommendation['reviews']; allUse
             const remainingCount = reviews.length - 1;
             return (
                 <div className="flex items-center space-x-2 rounded-full bg-amber-50 border border-amber-200 p-2 pr-4 shadow-sm">
-                    <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src={firstExpert.friend.avatarUrl} alt={firstExpert.friend.name} />
+                    <img
+                        className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+                        {...getImagePropsSafe(firstExpert.friend.avatarUrl, firstExpert.friend.name)}
+                    />
                     <p className="text-sm text-amber-900 font-medium">
                         ⭐ Рекомендует <span className="font-bold">{firstExpert.friend.name.split(' ')[0]}</span>
                         {remainingCount > 0 && ` и еще ${remainingCount}`}
@@ -101,83 +108,90 @@ const RecommendationBadge: React.FC<{ reviews: Recommendation['reviews']; allUse
 
     return (
         <>
-        <div 
-            className="group relative mt-4 cursor-pointer" 
-            onClick={handleInteraction}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            {renderBadgeContent()}
-            {isTooltipVisible && (
-                <div className="absolute z-10 bottom-full left-0 mb-2 w-72 bg-white border border-slate-200 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 pointer-events-none">
-                    <div className="p-4">
-                        <h4 className="font-bold text-gray-900 mb-2">Отзывы вашего круга:</h4>
-                        <ul className="space-y-3">
-                            {reviews.slice(0, 3).map(({ friend, review }) => {
-                                const author = allUsers[friend.id];
-                                const isPublicExpert = author?.isExpert && review.isPublic;
-                                return (
-                                <li key={friend.id}>
-                                    <div className="flex items-start space-x-2 group">
-                                        <img className={`h-8 w-8 rounded-full ${!isPublicExpert ? 'grayscale' : ''}`} src={friend.avatarUrl} alt={friend.name} />
-                                        <div>
-                                            <p className="text-sm font-semibold text-gray-900">{isPublicExpert ? friend.name : 'Кто-то из вашего круга'}</p>
-                                            <p className="text-xs text-slate-500 italic">"{review.pros}"</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            )})}
-                             {reviews.length > 3 && (
-                                 <li className="text-xs text-slate-500 font-medium text-center pt-2 border-t">и еще {reviews.length-3} отзыва...</li>
-                             )}
-                        </ul>
+            <div
+                className="group relative mt-4 cursor-pointer"
+                onClick={handleInteraction}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                {renderBadgeContent()}
+                {isTooltipVisible && (
+                    <div className="absolute z-10 bottom-full left-0 mb-2 w-72 bg-white border border-slate-200 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <div className="p-4">
+                            <h4 className="font-bold text-gray-900 mb-2">Отзывы вашего круга:</h4>
+                            <ul className="space-y-3">
+                                {reviews.slice(0, 3).map(({ friend, review }) => {
+                                    const author = allUsers[friend.id];
+                                    const isPublicExpert = author?.isExpert && review.isPublic;
+                                    return (
+                                        <li key={friend.id}>
+                                            <div className="flex items-start space-x-2 group">
+                                                <img
+                                                    className={`h-8 w-8 rounded-full ${!isPublicExpert ? 'grayscale' : ''}`}
+                                                    {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+                                                />
+                                                <div>
+                                                    <p className="text-sm font-semibold text-gray-900">{isPublicExpert ? friend.name : 'Кто-то из вашего круга'}</p>
+                                                    <p className="text-xs text-slate-500 italic">"{review.pros}"</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    )
+                                })}
+                                {reviews.length > 3 && (
+                                    <li className="text-xs text-slate-500 font-medium text-center pt-2 border-t">и еще {reviews.length - 3} отзыва...</li>
+                                )}
+                            </ul>
+                        </div>
+                        <div className="absolute w-3 h-3 bg-white transform rotate-45 -bottom-1.5 left-8 border-b border-r border-slate-200"></div>
                     </div>
-                    <div className="absolute w-3 h-3 bg-white transform rotate-45 -bottom-1.5 left-8 border-b border-r border-slate-200"></div>
-                </div>
-            )}
-        </div>
-        {isModalOpen && <RecommendationModal reviews={reviews} onClose={() => setIsModalOpen(false)} allUsers={allUsers} />}
+                )}
+            </div>
+            {isModalOpen && <RecommendationModal reviews={reviews} onClose={() => setIsModalOpen(false)} allUsers={allUsers} />}
         </>
     );
 };
 
 const HotelCard: React.FC<HotelCardProps> = ({ recommendation, currentUser, allUsers }) => {
-  const { hotel, reviews } = recommendation;
+    const { hotel, reviews } = recommendation;
 
-  return (
-    <Card className="transition-shadow duration-300 hover:shadow-xl">
-      <div className="md:flex">
-        <div className="md:flex-shrink-0">
-          <Link to={`/hotel/${hotel.id}`}>
-            <img className="h-56 w-full object-cover md:w-56" src={hotel.imageUrl} alt={hotel.name} />
-          </Link>
-        </div>
-        <div className="p-6 flex flex-col justify-between flex-grow">
-          <div>
-            <div className="uppercase tracking-wide text-sm text-cyan-600 font-semibold">{hotel.location}</div>
-            <Link to={`/hotel/${hotel.id}`} className="block mt-1 text-xl leading-tight font-bold text-black hover:underline">{hotel.name}</Link>
-            <div className="mt-2 flex items-center">
-                 <Rating score={hotel.rating} />
-                 <span className="ml-2 text-slate-500 text-sm">({hotel.rating.toFixed(1)})</span>
+    return (
+        <Card className="transition-shadow duration-300 hover:shadow-xl">
+            <div className="md:flex">
+                <div className="md:flex-shrink-0">
+                    <Link to={`/hotel/${hotel.id}`}>
+                        <img
+                            className="h-56 w-full object-cover md:w-56"
+                            {...getImagePropsSafe(hotel.imageUrl, hotel.name)}
+                        />
+                    </Link>
+                </div>
+                <div className="p-6 flex flex-col justify-between flex-grow">
+                    <div>
+                        <div className="uppercase tracking-wide text-sm text-cyan-600 font-semibold">{hotel.location}</div>
+                        <Link to={`/hotel/${hotel.id}`} className="block mt-1 text-xl leading-tight font-bold text-black hover:underline">{hotel.name}</Link>
+                        <div className="mt-2 flex items-center">
+                            <Rating score={hotel.rating} />
+                            <span className="ml-2 text-slate-500 text-sm">({hotel.rating.toFixed(1)})</span>
+                        </div>
+                        <RecommendationBadge reviews={reviews} allUsers={allUsers} />
+                    </div>
+                    <div className="mt-6 flex items-end justify-between">
+                        <div className="text-slate-700">
+                            <span className="text-2xl font-bold">{hotel.pricePerNight.toLocaleString('ru-RU')} ₽</span>
+                            <span className="text-slate-500"> / ночь</span>
+                        </div>
+                        <Link
+                            to={`/hotel/${hotel.id}`}
+                            className="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-colors text-center"
+                        >
+                            Посмотреть
+                        </Link>
+                    </div>
+                </div>
             </div>
-            <RecommendationBadge reviews={reviews} allUsers={allUsers} />
-          </div>
-          <div className="mt-6 flex items-end justify-between">
-            <div className="text-slate-700">
-                <span className="text-2xl font-bold">{hotel.pricePerNight.toLocaleString('ru-RU')} ₽</span>
-                <span className="text-slate-500"> / ночь</span>
-            </div>
-            <Link 
-              to={`/hotel/${hotel.id}`}
-              className="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-colors text-center"
-            >
-              Посмотреть
-            </Link>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
+        </Card>
+    );
 };
 
 export default HotelCard;

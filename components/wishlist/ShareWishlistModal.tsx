@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Friend } from '../../types';
 import Modal from '../ui/Modal';
+import { getImagePropsSafe } from '../../utils/imageUtils';
 
 interface ShareWishlistModalProps {
   allFriends: Friend[];
@@ -35,9 +36,8 @@ const ShareWishlistModal: React.FC<ShareWishlistModalProps> = ({ allFriends, cur
             return (
               <label
                 key={friend.id}
-                className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
-                  isAlreadyMember ? 'bg-slate-200 opacity-60' : isSelected ? 'bg-cyan-100' : 'hover:bg-slate-50'
-                }`}
+                className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${isAlreadyMember ? 'bg-slate-200 opacity-60' : isSelected ? 'bg-cyan-100' : 'hover:bg-slate-50'
+                  }`}
               >
                 <input
                   type="checkbox"
@@ -46,7 +46,10 @@ const ShareWishlistModal: React.FC<ShareWishlistModalProps> = ({ allFriends, cur
                   onChange={() => handleToggleFriend(friend.id)}
                   className="h-5 w-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
                 />
-                <img src={friend.avatarUrl} alt={friend.name} className="w-10 h-10 rounded-full ml-4" />
+                <img
+                  className="w-10 h-10 rounded-full ml-4"
+                  {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+                />
                 <span className="ml-3 font-medium text-slate-800">{friend.name}</span>
                 {isAlreadyMember && <span className="ml-auto text-xs font-semibold text-slate-500">УЖЕ В СПИСКЕ</span>}
               </label>

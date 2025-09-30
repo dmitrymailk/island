@@ -5,9 +5,11 @@ import Card from '../components/ui/Card';
 import Modal from '../components/ui/Modal';
 import TelegramContactsImport from '../components/TelegramContactsImport';
 import type { Friend } from '../types';
+import { getImagePropsSafe } from '../utils/imageUtils';
 
 interface InvitePageProps {
     onFriendsChange: (friends: Friend[], action: 'add') => void;
+    existingFriends?: Friend[];
 }
 
 // Mock potential friends found in contacts
@@ -17,7 +19,7 @@ const MOCK_FOUND_FRIENDS: Friend[] = [
     { id: 'f14', name: 'Алексей Морозов', avatarUrl: 'https://i.pravatar.cc/150?u=f14', source: 'contacts' },
 ];
 
-const InvitePage: React.FC<InvitePageProps> = ({ onFriendsChange }) => {
+const InvitePage: React.FC<InvitePageProps> = ({ onFriendsChange, existingFriends = [] }) => {
     const [view, setView] = useState<'options' | 'link' | 'contacts' | 'contacts-found' | 'telegram'>('options');
     const [linkCopied, setLinkCopied] = useState(false);
     const [contactsAdded, setContactsAdded] = useState(false);
@@ -98,7 +100,10 @@ const InvitePage: React.FC<InvitePageProps> = ({ onFriendsChange }) => {
                             {MOCK_FOUND_FRIENDS.map(friend => (
                                 <div key={friend.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
                                     <div className="flex items-center">
-                                        <img src={friend.avatarUrl} alt={friend.name} className="w-10 h-10 rounded-full" />
+                                        <img
+                                            className="w-10 h-10 rounded-full"
+                                            {...getImagePropsSafe(friend.avatarUrl, friend.name)}
+                                        />
                                         <p className="ml-3 font-medium">{friend.name}</p>
                                     </div>
                                 </div>
@@ -137,6 +142,7 @@ const InvitePage: React.FC<InvitePageProps> = ({ onFriendsChange }) => {
                 <TelegramContactsImport
                     onContactsImported={handleTelegramContactsImported}
                     onClose={() => setShowTelegramModal(false)}
+                    existingFriends={existingFriends}
                 />
             </Modal>
         </div>
