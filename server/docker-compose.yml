@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  telegram-bot-server:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    container_name: ostrovok-telegram-bot
+    ports:
+      - "3001:3001"
+    volumes:
+      # Монтируем серверную папку для hot-reload
+      - .:/app/server
+      # Сохраняем db.json на хосте
+      - ./db.json:/app/server/db.json
+    environment:
+      # Переменные окружения из .env файла
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - PORT=${PORT:-3001}
+      - NODE_ENV=production
+    env_file:
+      # Читаем .env из корня проекта
+      - ../.env
+    restart: unless-stopped
+    networks:
+      - ostrovok-network
+
+networks:
+  ostrovok-network:
+    driver: bridge

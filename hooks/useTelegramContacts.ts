@@ -11,6 +11,7 @@ import type {
   SavedContact
 } from '../types';
 import { TelegramContactsAPI, ContactUtils } from '../utils/telegramContactsApi';
+import { getApiUrl } from '../config';
 
 // Расширяем window для доступа к Telegram WebApp API
 declare global {
@@ -196,7 +197,8 @@ export const useTelegramContacts = () => {
         userId = 427649895;
       }
 
-      const response = await fetch(`http://localhost:3001/api/contacts/${userId}`);
+      const apiUrl = getApiUrl(`/api/contacts/${userId}`);
+      const response = await fetch(apiUrl);
       if (!response.ok) {
         throw new Error(`Ошибка сети при загрузке контактов: ${response.status}`);
       }
@@ -346,7 +348,8 @@ export const useTelegramContacts = () => {
         userId = 427649895;
       }
 
-      const response = await fetch(`http://localhost:3001/api/contacts/${userId}`, {
+      const apiUrl = getApiUrl(`/api/contacts/${userId}`);
+      const response = await fetch(apiUrl, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
