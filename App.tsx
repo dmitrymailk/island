@@ -23,6 +23,7 @@ import { useMockData } from './hooks/useMockData';
 import type { Review, Friend, User, Wishlist, Transaction, Challenge, DiscoverItem, Hotel, VibeCornerItem } from './types';
 import { getRecommendations, LEVELS, MOCK_WISHLISTS, MOCK_USERS_DATABASE, TRANSACTIONS, ACTIVE_CHALLENGES, ALL_BADGES } from './constants';
 import { preloadCriticalImages } from './utils/imageUtils';
+import { generateMockUserData } from './utils/mockDataGenerator';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -35,6 +36,7 @@ const App: React.FC = () => {
   const [showExpertModal, setShowExpertModal] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [discoverActionsCount, setDiscoverActionsCount] = useState(0);
+  const [friendsInitialized, setFriendsInitialized] = useState(false);
 
 
   const { allReviews: initialReviews, friends: initialFriends, hotels, loading: dataLoading } = useMockData();
@@ -76,9 +78,13 @@ const App: React.FC = () => {
 
   // Initial load of all mock data
   useEffect(() => {
-    if (!dataLoading) {
+    if (!dataLoading && !friendsInitialized) {
+      console.log('App: Loading initial data, initialFriends =', initialFriends);
       setReviews(initialReviews);
+      // Загружаем initialFriends только один раз при первой загрузке
+      console.log('App: Setting friends to initialFriends');
       setFriends(initialFriends);
+      setFriendsInitialized(true);
       setCurrentUser(MOCK_USERS_DATABASE['user123']);
       setWishlists(MOCK_WISHLISTS);
       setTransactions(TRANSACTIONS);
@@ -91,7 +97,7 @@ const App: React.FC = () => {
         });
       }
     }
-  }, [dataLoading, initialReviews, initialFriends, hotels]);
+  }, [dataLoading, initialReviews, initialFriends, hotels, friendsInitialized]);
 
   const recommendations = useMemo(() => {
     if (!friends.length || !hotels.length) return [];
@@ -185,19 +191,58 @@ const App: React.FC = () => {
   };
 
   const handleFriendsChange = (changedFriends: Friend[], action: 'add' | 'remove') => {
+    console.log('App: handleFriendsChange called', { changedFriends, action });
     if (action === 'add') {
       setFriends(prev => {
+        console.log('App: prev friends =', prev);
         const existingIds = new Set(prev.map(f => f.id));
         const newFriends = changedFriends.filter(friend => !existingIds.has(friend.id));
+        console.log('App: newFriends to add =', newFriends);
 
         if (newFriends.length === 0) {
-          setToast({ message: 'Все выбранные друзья уже в вашем списке.', type: 'info' });
+          setToast({ message: 'Все выбранные друзья уже в вашем списке.', type: 'success' });
           return prev;
         }
 
+        // Генерируем mock данные для каждого нового пользователя
+        const allExistingUserIds = Object.keys(MOCK_USERS_DATABASE);
+        newFriends.forEach(friend => {
+          // Проверяем, есть ли уже данные для этого пользователя
+          if (!MOCK_USERS_DATABASE[friend.id]) {
+            // Получаем Telegram ID из ID друга (предполагаем что ID содержит telegram ID)
+            const telegramId = parseInt(friend.id.replace('tg_', '')) || Math.floor(Math.random() * 1000000000);
+
+            // Генерируем mock данные активности пользователя
+            // Имя и аватар берутся реальные из Telegram!
+            const { user: mockUser, reviews: mockReviews } = generateMockUserData(
+              friend.id,
+              telegramId,
+              friend.name, // Реальное имя из Telegram
+              friend.avatarUrl, // Реальный аватар из Telegram
+              allExistingUserIds
+            );
+
+            // Добавляем пользователя в базу данных
+            MOCK_USERS_DATABASE[friend.id] = mockUser;
+
+            // Добавляем отзывы в общий список
+            setReviews(prevReviews => [...prevReviews, ...mockReviews]);
+
+            console.log(`Generated mock data for user ${friend.name}:`, {
+              level: mockUser.level,
+              xp: mockUser.xp,
+              reviewsCount: mockReviews.length,
+              visitedLocations: mockUser.visitedLocations.length,
+              isExpert: mockUser.isExpert
+            });
+          }
+        });
+
         const friendWord = newFriends.length === 1 ? 'друг' : newFriends.length < 5 ? 'друга' : 'друзей';
         setToast({ message: `${newFriends.length} ${friendWord} добавлено!`, type: 'success' });
-        return [...prev, ...newFriends];
+        const result = [...prev, ...newFriends];
+        console.log('App: new friends state =', result);
+        return result;
       });
     } else if (action === 'remove') {
       const idsToRemove = new Set(changedFriends.map(f => f.id));

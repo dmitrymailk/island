@@ -174,23 +174,29 @@ export const useTelegramContacts = () => {
 
   // Загрузка всех контактов
   const loadAllContacts = useCallback(async () => {
-    if (!isTelegramWebApp()) {
-      setError('Telegram WebApp недоступен');
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const currentUser = getCurrentTelegramUser();
-      if (!currentUser) {
-        setError("Не удалось определить пользователя Telegram.");
-        setIsLoading(false);
-        return;
+      // Пытаемся получить ID текущего пользователя Telegram
+      let userId: number | null = null;
+
+      if (isTelegramWebApp()) {
+        const currentUser = getCurrentTelegramUser();
+        if (currentUser) {
+          userId = currentUser.id;
+        }
       }
 
-      const response = await fetch(`http://localhost:3001/api/contacts/${currentUser.id}`);
+      // Если не получилось через Telegram WebApp, используем фиксированный ID для демонстрации
+      // В продакшене здесь должна быть авторизация через другой механизм
+      if (!userId) {
+        console.log('Telegram WebApp недоступен, используем демо-режим с фиксированным userId');
+        // Используем userId из db.json для демонстрации
+        userId = 427649895;
+      }
+
+      const response = await fetch(`http://localhost:3001/api/contacts/${userId}`);
       if (!response.ok) {
         throw new Error(`Ошибка сети при загрузке контактов: ${response.status}`);
       }
@@ -317,12 +323,6 @@ export const useTelegramContacts = () => {
 
   // Удаление контактов по номерам телефонов
   const deleteContactsByPhones = useCallback(async (phones: string[]) => {
-    const currentUser = getCurrentTelegramUser();
-    if (!currentUser) {
-      setError('Не удалось определить пользователя Telegram.');
-      return;
-    }
-
     if (phones.length === 0) {
       return;
     }
@@ -331,7 +331,22 @@ export const useTelegramContacts = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:3001/api/contacts/${currentUser.id}`, {
+      // Пытаемся получить ID текущего пользователя Telegram
+      let userId: number | null = null;
+
+      if (isTelegramWebApp()) {
+        const currentUser = getCurrentTelegramUser();
+        if (currentUser) {
+          userId = currentUser.id;
+        }
+      }
+
+      // Если не получилось через Telegram WebApp, используем фиксированный ID для демонстрации
+      if (!userId) {
+        userId = 427649895;
+      }
+
+      const response = await fetch(`http://localhost:3001/api/contacts/${userId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -354,7 +369,7 @@ export const useTelegramContacts = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [getCurrentTelegramUser, loadAllContacts]);
+  }, [isTelegramWebApp, getCurrentTelegramUser, loadAllContacts]);
 
   // Загрузка сохраненных контактов
   const loadSavedContacts = useCallback(async () => {

@@ -6,6 +6,13 @@
       "last_name": "Капшук",
       "vcard": "BEGIN:VCARD\nVERSION:3.0\nFN:Арина Капшук\nTEL;CELL:+79272587856\nEND:VCARD",
       "user_id": 5457930994
+    },
+    {
+      "phone_number": "+79997443472",
+      "first_name": "Алина",
+      "last_name": "(Маникюр)",
+      "vcard": "BEGIN:VCARD\nVERSION:3.0\nFN:Алина (Маникюр)\nTEL;MOBILE:+79997443472\nEND:VCARD",
+      "user_id": 946942091
     }
   ]
 }

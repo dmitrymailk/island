@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import type { User, Review, Hotel, Friend } from '../types';
 import ProfileHeader from '../components/passport/ProfileHeader';
@@ -8,6 +8,7 @@ import StampCollectionWidget from '../components/passport/StampCollectionWidget'
 import PublicLikesWidget from '../components/profile/PublicLikesWidget';
 import Card from '../components/ui/Card';
 import FriendsWidget from '../components/profile/FriendsWidget';
+import { generateMockUserData } from '../utils/mockDataGenerator';
 
 interface ProfilePageProps {
     allUsers: Record<string, User>;
@@ -21,6 +22,42 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ allUsers, allReviews, allHotels, allFriends, currentUser, onFollow, onFriendsChange }) => {
     const { userId } = useParams<{ userId: string }>();
+    const [, forceUpdate] = useState({});
+
+    // Если пользователь не найден в базе, но это импортированный друг из Telegram,
+    // генерируем для него рандомную активность
+    useEffect(() => {
+        if (userId && !allUsers[userId]) {
+            const friend = allFriends.find(f => f.id === userId);
+            if (friend) {
+                // Это импортированный друг из Telegram, для которого нет данных
+                const telegramId = parseInt(friend.id.replace('tg_', '')) || Math.floor(Math.random() * 1000000000);
+                const allExistingUserIds = Object.keys(allUsers);
+
+                const { user: mockUser } = generateMockUserData(
+                    friend.id,
+                    telegramId,
+                    friend.name,
+                    friend.avatarUrl,
+                    allExistingUserIds
+                );
+
+                // Добавляем пользователя в базу данных
+                allUsers[friend.id] = mockUser;
+
+                console.log(`Generated mock data for user ${friend.name} on profile view:`, {
+                    level: mockUser.level,
+                    xp: mockUser.xp,
+                    visitedLocations: mockUser.visitedLocations.length,
+                    isExpert: mockUser.isExpert
+                });
+
+                // Принудительно обновляем компонент
+                forceUpdate({});
+            }
+        }
+    }, [userId, allUsers, allFriends]);
+
     const user = userId ? allUsers[userId] : undefined;
 
     if (!user) {

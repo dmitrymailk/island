@@ -39,9 +39,18 @@ const ContactManager: React.FC<ContactManagerProps> = ({
   const [botUsername, setBotUsername] = useState('ostrovok_friends_bot'); // ЗАМЕНИТЕ НА USERNAME ВАШЕГО БОТА
 
   const handleImport = useCallback(() => {
-    if (!onContactsImported) return;
+    console.log('ContactManager: handleImport called');
+    console.log('ContactManager: onContactsImported =', onContactsImported);
+    console.log('ContactManager: selectedContacts =', selectedContacts);
+    console.log('ContactManager: allContacts =', allContacts);
+
+    if (!onContactsImported) {
+      console.log('ContactManager: No onContactsImported callback, returning');
+      return;
+    }
 
     const contactsToImport = allContacts.filter(c => selectedContacts.has(c.id));
+    console.log('ContactManager: contactsToImport =', contactsToImport);
     onContactsImported(contactsToImport);
   }, [onContactsImported, allContacts, selectedContacts]);
 
