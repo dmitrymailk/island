@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, useParams, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Recommendations from './pages/Recommendations';
 import Admin from './pages/Admin';
@@ -445,6 +445,7 @@ const App: React.FC = () => {
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <Routes>
           <Route path="/" element={<Recommendations recommendations={recommendations} loading={dataLoading} vibeCornerFeed={vibeCornerFeed} currentUser={currentUser} />} />
+          <Route path="/recommendations" element={<Recommendations recommendations={recommendations} loading={dataLoading} vibeCornerFeed={vibeCornerFeed} currentUser={currentUser} />} />
           <Route path="/discover" element={<DiscoverPage hotels={hotels} reviews={reviews} friends={friends} currentUser={currentUser} allUsers={MOCK_USERS_DATABASE} onDiscoverAction={handleDiscoverAction} setToast={setToast} />} />
           <Route path="/admin" element={<Admin reviews={reviews} friends={friends} hotels={hotels} onStatusChange={handleStatusChange} loading={dataLoading} />} />
           <Route path="/analytics" element={<Analytics />} />
@@ -458,6 +459,7 @@ const App: React.FC = () => {
           <Route path="/wishlist/:wishlistId" element={<WishlistDetailPage allWishlists={wishlists} allHotels={hotels} allFriends={friends} currentUser={currentUser} allUsers={MOCK_USERS_DATABASE} onShareWishlist={handleShareWishlist} />} />
           <Route path="/year-in-review" element={<YearSummaryPage user={currentUser} reviews={reviews} />} />
           <Route path="/profile/:userId" element={<ProfilePage allUsers={MOCK_USERS_DATABASE} allReviews={reviews} allHotels={hotels} allFriends={friends} currentUser={currentUser} onFollow={handleFollow} onFriendsChange={handleFriendsChange} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       {showLevelUpModal && <LevelUpModal level={showLevelUpModal} onClose={() => setShowLevelUpModal(null)} />}
