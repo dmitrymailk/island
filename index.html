@@ -87,6 +87,17 @@
       transform: translate3d(0, 0, 0);
       -webkit-transform: translate3d(0, 0, 0);
     }
+
+    /* Увеличенный отступ снизу на мобильных устройствах */
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 80px;
+      }
+
+      main {
+        padding-bottom: 80px !important;
+      }
+    }
   </style>
   <script type="importmap">
 {
