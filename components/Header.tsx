@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import type { User } from '../types';
 import { getImagePropsSafe } from '../utils/imageUtils';
+import MobileMenu from './MobileMenu';
 
 interface HeaderProps {
   user: User;
@@ -22,14 +23,24 @@ const Logo = () => (
 
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
       ? 'bg-cyan-100 text-cyan-700'
       : 'text-slate-600 hover:bg-slate-200'
     }`;
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
-    <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -62,10 +73,35 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             </div>
           </div>
           <div className="md:hidden flex items-center">
-            {/* Mobile menu button can be added here */}
+            {/* Mobile menu button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              aria-label={isMobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
+            >
+              <svg
+                className={`w-6 h-6 transition-transform duration-200 ${isMobileMenuOpen ? 'rotate-90' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <MobileMenu
+        user={user}
+        isOpen={isMobileMenuOpen}
+        onClose={closeMobileMenu}
+      />
     </header>
   );
 };
