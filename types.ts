@@ -7,17 +7,29 @@ export interface Friend {
 
 export interface Hotel {
   id: string;
-  name:string;
+  name: string;
   location: string;
   coordinates: {
-      lat: number;
-      lng: number;
+    lat: number;
+    lng: number;
   };
   pricePerNight: number;
   rating: number;
   imageUrl: string;
   photos: string[];
   videoUrl?: string;
+  additionalInfo?: {
+    starsCount: number;
+    reviewCount: string;
+    ratingCategory: string;
+    amenities: string[];
+    valueAdds: string[];
+    discount: string;
+    oldPrice: string;
+    roomType: string;
+    roomSubtitle: string;
+    distance: string;
+  };
 }
 
 export type TripTag = 'Семья с детьми' | 'Романтика' | 'Бизнес' | 'Соло' | 'С животными';
@@ -46,40 +58,40 @@ export interface Recommendation {
 }
 
 export interface AnalyticsData {
-    connections: { month: string; count: number }[];
-    bookings: { month: string; count: number }[];
-    recommendationSources: { name: string; value: number }[];
+  connections: { month: string; count: number }[];
+  bookings: { month: string; count: number }[];
+  recommendationSources: { name: string; value: number }[];
 }
 
 // --- Gamification Types ---
 
 export interface Level {
-    level: number;
-    name: string;
-    xpThreshold: number;
-    cashbackPercent: number;
+  level: number;
+  name: string;
+  xpThreshold: number;
+  cashbackPercent: number;
 }
 
 export interface Badge {
-    id: string;
-    name: string;
-    description: string;
-    icon: string; // Emoji or SVG path
+  id: string;
+  name: string;
+  description: string;
+  icon: string; // Emoji or SVG path
 }
 
 export interface User {
-    id: string;
-    name: string;
-    avatarUrl: string;
-    level: number;
-    xp: number;
-    miles: number;
-    achievements: string[]; // Array of badge IDs
-    visitedLocations: string[]; // Array of city/country names
-    discoverHistory: { hotelId: string; action: 'like' | 'dislike' }[];
-    following: string[]; // Array of user IDs
-    isExpert: boolean;
-    bio?: string;
+  id: string;
+  name: string;
+  avatarUrl: string;
+  level: number;
+  xp: number;
+  miles: number;
+  achievements: string[]; // Array of badge IDs
+  visitedLocations: string[]; // Array of city/country names
+  discoverHistory: { hotelId: string; action: 'like' | 'dislike' }[];
+  following: string[]; // Array of user IDs
+  isExpert: boolean;
+  bio?: string;
 }
 
 export interface Wishlist {
@@ -120,17 +132,18 @@ export interface Perk {
 export type SliderItem =
   | { type: 'photo'; url: string; }
   | { type: 'video'; url: string; }
-  | { type: 'review'; review: Review; friend: Friend; };
+  | { type: 'review'; review: Review; friend: Friend; }
+  | { type: 'following_review'; review: Review; user: User; };
 
-export type DiscoverItem = { 
-    type: 'hotel', 
-    hotel: Hotel, 
-    sliderContent: SliderItem[],
-    recommendedBy?: Friend 
+export type DiscoverItem = {
+  type: 'hotel',
+  hotel: Hotel,
+  sliderContent: SliderItem[],
+  recommendedBy?: Friend
 };
 
 // --- Vibe Corner Types ---
 export interface VibeCornerItem {
-    hotel: Hotel;
-    likedBy: User[];
+  hotel: Hotel;
+  likedBy: User[];
 }

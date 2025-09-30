@@ -24,7 +24,7 @@ const SliderReviewContent: React.FC<{
             <div className="absolute top-0 left-0 w-full h-full bg-black/40"></div>
 
             <div className="relative z-10 text-white">
-                <div className="text-6xl opacity-30 leading-none font-serif">“</div>
+                <div className="text-6xl opacity-30 leading-none font-serif">"</div>
                 <p className="text-xl font-semibold -mt-8 shadow-black/50 [text-shadow:_0_2px_4px_var(--tw-shadow-color)]">
                     {impactfulText}
                 </p>
@@ -35,7 +35,62 @@ const SliderReviewContent: React.FC<{
                     />
                     <div>
                         <p className="font-bold">{friend.name}</p>
-                        <p className="text-sm opacity-80">{review.tripTags.join(', ')}</p>
+                        <div className="flex items-center space-x-2">
+                            <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                    <span key={i} className={i < review.rating ? 'text-yellow-400' : 'text-gray-400'}>★</span>
+                                ))}
+                            </div>
+                            <p className="text-sm opacity-80">{review.tripTags.join(', ')}</p>
+                        </div>
+                        <p className="text-xs opacity-60">{new Date(review.date).toLocaleDateString('ru-RU')}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const SliderFollowingReviewContent: React.FC<{
+    item: Extract<DiscoverItem['sliderContent'][number], { type: 'following_review' }>;
+    hotelImageUrl: string;
+}> = ({ item, hotelImageUrl }) => {
+    const { review, user } = item;
+    const impactfulText = review.lifehack || review.pros;
+
+    return (
+        <div className="w-full h-full relative flex flex-col p-6 justify-center items-center text-center">
+            <img
+                className="absolute top-0 left-0 w-full h-full object-cover scale-125 blur-md"
+                {...getImagePropsSafe(review.photos[0] || hotelImageUrl, "Review background")}
+            />
+            <div className="absolute top-0 left-0 w-full h-full bg-black/40"></div>
+
+            <div className="relative z-10 text-white">
+                <div className="text-6xl opacity-30 leading-none font-serif">"</div>
+                <p className="text-xl font-semibold -mt-8 shadow-black/50 [text-shadow:_0_2px_4px_var(--tw-shadow-color)]">
+                    {impactfulText}
+                </p>
+                <div className="mt-6 flex items-center justify-center space-x-3">
+                    <img
+                        className="w-12 h-12 rounded-full border-2 border-white/50"
+                        {...getImagePropsSafe(user.avatarUrl, user.name)}
+                    />
+                    <div>
+                        <p className="font-bold">{user.name}</p>
+                        <div className="flex items-center space-x-2">
+                            <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                    <span key={i} className={i < review.rating ? 'text-yellow-400' : 'text-gray-400'}>★</span>
+                                ))}
+                            </div>
+                            <p className="text-sm opacity-80">{review.tripTags.join(', ')}</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <p className="text-xs opacity-60">{new Date(review.date).toLocaleDateString('ru-RU')}</p>
+                            <p className="text-xs opacity-60">•</p>
+                            <p className="text-xs opacity-60">Подписка</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -50,6 +105,7 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPaused, setIsPaused] = useState(false);
     const intervalRef = useRef<number | null>(null);
+
 
     useEffect(() => {
         // Function to explicitly clear any existing interval
@@ -130,6 +186,7 @@ const HotelDiscoverCard: React.FC<HotelDiscoverCardProps> = ({ item, isTopCard, 
                 {currentSlide.type === 'photo' && <img className="absolute top-0 left-0 w-full h-full object-cover" {...getImagePropsSafe(currentSlide.url, hotel.name)} />}
                 {currentSlide.type === 'video' && <video ref={videoRef} src={currentSlide.url} className="absolute top-0 left-0 w-full h-full object-cover" autoPlay muted loop playsInline />}
                 {currentSlide.type === 'review' && <SliderReviewContent item={currentSlide} hotelImageUrl={hotel.imageUrl} />}
+                {currentSlide.type === 'following_review' && <SliderFollowingReviewContent item={currentSlide} hotelImageUrl={hotel.imageUrl} />}
             </div>
 
             {/* Gradient Overlay & Info */}

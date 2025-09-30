@@ -826,6 +826,41 @@ export const REVIEWS: Review[] = [
     // Reviews from the current user to populate their travel history
     { id: 'r_user1', friendId: 'user123', hotelId: 'h2', rating: 5, pros: 'Невероятный вид и отличный сервис. Бассейн на крыше просто супер!', cons: 'Цены в ресторане отеля довольно высокие.', lifehack: 'Заказывайте такси через приложение, а не у отеля, выйдет дешевле.', tripTags: ['Романтика', 'Соло'], photos: ['https://picsum.photos/seed/user_r1p1/400/300'], date: '2024-07-18', status: 'approved', isPublic: false },
     { id: 'r_user2', friendId: 'user123', hotelId: 'h4', rating: 4, pros: 'Отличное место для семейного отдыха в горах. Хороший SPA и чистый воздух.', cons: 'Завтраки могли бы быть разнообразнее.', tripTags: ['Семья с детьми'], photos: [], date: '2024-01-25', status: 'approved', isPublic: false },
+    // Reviews from users that current user follows but are not friends
+    { id: 'r_following1', friendId: 'f1', hotelId: 'h1', rating: 5, pros: 'Отличный отель для бизнес-поездок. Удобное расположение и хороший сервис.', cons: 'Нет бассейна, но это не критично для деловой поездки.', lifehack: 'Заказывайте номер на верхних этажах - тише и вид лучше.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/following1/400/300'], date: '2024-07-25', status: 'approved', isPublic: true },
+    { id: 'r_following2', friendId: 'f2', hotelId: 'h3', rating: 4, pros: 'Красивый исторический отель с отличным расположением.', cons: 'Номера немного тесноваты, но это особенность старых зданий.', tripTags: ['Романтика'], photos: [], date: '2024-07-28', status: 'approved', isPublic: true },
+    { id: 'r_following3', friendId: 'f7', hotelId: 'h2', rating: 5, pros: 'Невероятный вид на город! Бассейн на крыше - это что-то особенное.', cons: 'Очень дорогие напитки в баре.', tripTags: ['Романтика'], photos: ['https://picsum.photos/seed/following3/400/300'], date: '2024-08-01', status: 'approved', isPublic: true },
+    // Reviews for HitOtel (h12) to test the slider
+    { id: 'r_hitotel1', friendId: 'f1', hotelId: 'h12', rating: 4, pros: 'Хороший отель в Волгограде. Чистые номера и дружелюбный персонал.', cons: 'Завтрак мог бы быть разнообразнее.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/hitotel1/400/300'], date: '2024-07-30', status: 'approved', isPublic: true },
+    { id: 'r_hitotel2', friendId: 'f2', hotelId: 'h12', rating: 5, pros: 'Отличное расположение в центре города. Все достопримечательности в пешей доступности.', cons: 'Нет бассейна, но это не критично.', tripTags: ['Соло'], photos: [], date: '2024-08-05', status: 'approved', isPublic: true },
+    { id: 'r_hitotel3', friendId: 'f7', hotelId: 'h12', rating: 4, pros: 'Современный отель с хорошим сервисом. Рекомендую для деловых поездок.', cons: 'Wi-Fi иногда работает медленно.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/hitotel3/400/300'], date: '2024-08-10', status: 'approved', isPublic: true },
+    // Reviews from following users (not friends) for HitOtel
+    { id: 'r_hitotel4', friendId: 'u1', hotelId: 'h12', rating: 5, pros: 'Потрясающий вид на Волгу! Очень понравился номер с панорамными окнами.', cons: 'Завтрак начинается поздно - в 8:00.', tripTags: ['Романтика'], photos: ['https://picsum.photos/seed/hitotel4/400/300'], date: '2024-08-15', status: 'approved', isPublic: true },
+    { id: 'r_hitotel5', friendId: 'u2', hotelId: 'h12', rating: 4, pros: 'Отличное расположение для знакомства с Волгоградом. Персонал очень отзывчивый.', cons: 'В номере было немного шумно из-за дороги.', tripTags: ['Соло'], photos: [], date: '2024-08-20', status: 'approved', isPublic: true },
+    // Additional reviews for friends with few reviews
+    { id: 'r_f6_1', friendId: 'f6', hotelId: 'h1', rating: 4, pros: 'Уютный отель в центре Волгограда. Хорошее соотношение цена-качество.', cons: 'Нет бассейна, но это не критично для короткой поездки.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/f6_1/400/300'], date: '2024-08-25', status: 'approved', isPublic: true },
+    { id: 'r_f6_2', friendId: 'f6', hotelId: 'h3', rating: 5, pros: 'Отличный отель! Очень понравился завтрак и персонал.', cons: 'Парковка платная, но это нормально для центра.', tripTags: ['Семья с детьми'], photos: [], date: '2024-09-01', status: 'approved', isPublic: true },
+    { id: 'r_f8_1', friendId: 'f8', hotelId: 'h1', rating: 4, pros: 'Хороший отель для семейного отдыха. Дети остались довольны.', cons: 'Wi-Fi работал медленно в номере.', tripTags: ['Семья с детьми'], photos: ['https://picsum.photos/seed/f8_1/400/300'], date: '2024-08-28', status: 'approved', isPublic: true },
+    { id: 'r_f8_2', friendId: 'f8', hotelId: 'h4', rating: 5, pros: 'Потрясающее место! Отличный SPA и красивая природа вокруг.', cons: 'Дорого, но оно того стоит.', tripTags: ['Романтика'], photos: [], date: '2024-09-05', status: 'approved', isPublic: true },
+    { id: 'r_f10_1', friendId: 'f10', hotelId: 'h1', rating: 4, pros: 'Современный отель с хорошим сервисом. Рекомендую для деловых поездок.', cons: 'Нет бассейна, но есть фитнес-зал.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/f10_1/400/300'], date: '2024-08-30', status: 'approved', isPublic: true },
+    { id: 'r_f10_2', friendId: 'f10', hotelId: 'h2', rating: 5, pros: 'Невероятный вид! Очень понравился номер с панорамными окнами.', cons: 'Цены в ресторане высокие, но качество отличное.', tripTags: ['Романтика'], photos: [], date: '2024-09-03', status: 'approved', isPublic: true },
+    // More reviews for u1 and u2 to make them more active
+    { id: 'r_u1_1', friendId: 'u1', hotelId: 'h1', rating: 4, pros: 'Хороший отель в Волгограде. Удобное расположение и чистые номера.', cons: 'Завтрак мог бы быть разнообразнее.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/u1_1/400/300'], date: '2024-08-22', status: 'approved', isPublic: true },
+    { id: 'r_u1_2', friendId: 'u1', hotelId: 'h3', rating: 5, pros: 'Отличный отель! Очень понравился персонал и завтраки.', cons: 'Нет бассейна, но это не критично.', tripTags: ['Семья с детьми'], photos: [], date: '2024-08-26', status: 'approved', isPublic: true },
+    { id: 'r_u2_1', friendId: 'u2', hotelId: 'h1', rating: 4, pros: 'Современный отель с хорошим сервисом. Рекомендую для деловых поездок.', cons: 'Wi-Fi иногда работает медленно.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/u2_1/400/300'], date: '2024-08-24', status: 'approved', isPublic: true },
+    { id: 'r_u2_2', friendId: 'u2', hotelId: 'h3', rating: 5, pros: 'Потрясающий отель! Очень понравился вид и завтраки.', cons: 'Парковка платная, но это нормально для центра.', tripTags: ['Романтика'], photos: [], date: '2024-08-29', status: 'approved', isPublic: true },
+    // More reviews for Volgograd hotels to make the app more populated
+    { id: 'r_volgograd_1', friendId: 'f1', hotelId: 'h13', rating: 4, pros: 'Хороший отель в Волгограде. Чистые номера и дружелюбный персонал.', cons: 'Завтрак мог бы быть разнообразнее.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/volgograd1/400/300'], date: '2024-09-10', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_2', friendId: 'f2', hotelId: 'h14', rating: 5, pros: 'Отличный бутик-отель! Очень стильно и уютно.', cons: 'Нет бассейна, но это не критично.', tripTags: ['Романтика'], photos: [], date: '2024-09-12', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_3', friendId: 'f7', hotelId: 'h15', rating: 4, pros: 'Хороший гостевой дом. Рекомендую для бюджетных поездок.', cons: 'Wi-Fi иногда работает медленно.', tripTags: ['Соло'], photos: ['https://picsum.photos/seed/volgograd3/400/300'], date: '2024-09-15', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_4', friendId: 'f8', hotelId: 'h16', rating: 5, pros: 'Отличный отель с историей! Очень понравился персонал.', cons: 'Номера немного тесноваты, но это особенность старых зданий.', tripTags: ['Семья с детьми'], photos: [], date: '2024-09-18', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_5', friendId: 'f9', hotelId: 'h17', rating: 4, pros: 'Современный отель с хорошим сервисом. Рекомендую для деловых поездок.', cons: 'Парковка платная, но это нормально для центра.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/volgograd5/400/300'], date: '2024-09-20', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_6', friendId: 'f10', hotelId: 'h18', rating: 3, pros: 'Неплохой отель за свои деньги. Чисто и уютно.', cons: 'Завтрак мог бы быть разнообразнее.', tripTags: ['Соло'], photos: [], date: '2024-09-22', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_7', friendId: 'f11', hotelId: 'h19', rating: 4, pros: 'Хороший отель в Волгограде. Удобное расположение.', cons: 'Нет бассейна, но есть фитнес-зал.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/volgograd7/400/300'], date: '2024-09-25', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_8', friendId: 'f12', hotelId: 'h20', rating: 5, pros: 'Потрясающие апартаменты! Очень понравился вид и интерьер.', cons: 'Дорого, но оно того стоит.', tripTags: ['Романтика'], photos: [], date: '2024-09-28', status: 'approved', isPublic: true },
+    // Reviews from following users for Volgograd hotels
+    { id: 'r_volgograd_u1_1', friendId: 'u1', hotelId: 'h13', rating: 4, pros: 'Хороший отель в Волгограде. Чистые номера и дружелюбный персонал.', cons: 'Завтрак мог бы быть разнообразнее.', tripTags: ['Бизнес'], photos: ['https://picsum.photos/seed/volgograd_u1_1/400/300'], date: '2024-09-11', status: 'approved', isPublic: true },
+    { id: 'r_volgograd_u2_1', friendId: 'u2', hotelId: 'h14', rating: 5, pros: 'Отличный бутик-отель! Очень стильно и уютно.', cons: 'Нет бассейна, но это не критично.', tripTags: ['Романтика'], photos: [], date: '2024-09-13', status: 'approved', isPublic: true },
 ];
 
 export const getRecommendations = (reviews: Review[], hotels: Hotel[], friends: Friend[]): Recommendation[] => {
@@ -912,21 +947,31 @@ export const MOCK_USERS_DATABASE: Record<string, User> = {
             { hotelId: 'h8', action: 'like' },
             { hotelId: 'h7', action: 'like' },
         ],
-        following: ['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f9', 'f11', 'f12'],
+        following: ['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f9', 'f11', 'f12', 'u1', 'u2'],
         isExpert: false,
         bio: 'Люблю находить уютные отели с хорошим видом. Всегда ищу места, куда хочется вернуться.',
     },
     'f1': {
-        id: 'f1', name: 'Анна Иванова', avatarUrl: 'https://i.pravatar.cc/150?u=f1', level: 2, xp: 2500, miles: 500, achievements: ['b1', 'b4'], visitedLocations: ['Дубай, ОАЭ', 'Сочи, Россия', 'Ижевск, Россия', 'Калининград, Россия'], discoverHistory: [
+        id: 'f1', name: 'Анна Иванова', avatarUrl: 'https://i.pravatar.cc/150?u=f1', level: 2, xp: 2500, miles: 500, achievements: ['b1', 'b4'], visitedLocations: ['Дубай, ОАЭ', 'Сочи, Россия', 'Ижевск, Россия', 'Калининград, Россия', 'Волгоград, Россия'], discoverHistory: [
             { hotelId: 'h3', action: 'like' },
             { hotelId: 'h5', action: 'like' },
             { hotelId: 'h8', action: 'like' },
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h4', action: 'like' },
+            { hotelId: 'h11', action: 'like' },
+            { hotelId: 'h12', action: 'like' },
+            { hotelId: 'h13', action: 'like' },
         ], following: [], isExpert: false
     },
     'f2': {
-        id: 'f2', name: 'Петр Сидоров', avatarUrl: 'https://i.pravatar.cc/150?u=f2', level: 2, xp: 1800, miles: 1200, achievements: ['b1', 'b5'], visitedLocations: ['Ижевск, Россия', 'Дубай, ОАЭ'], discoverHistory: [
+        id: 'f2', name: 'Петр Сидоров', avatarUrl: 'https://i.pravatar.cc/150?u=f2', level: 2, xp: 1800, miles: 1200, achievements: ['b1', 'b5'], visitedLocations: ['Ижевск, Россия', 'Дубай, ОАЭ', 'Волгоград, Россия'], discoverHistory: [
             { hotelId: 'h6', action: 'like' },
             { hotelId: 'h7', action: 'like' },
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h3', action: 'like' },
+            { hotelId: 'h5', action: 'like' },
+            { hotelId: 'h12', action: 'like' },
+            { hotelId: 'h14', action: 'like' },
         ], following: [], isExpert: true
     },
     'f3': {
@@ -950,7 +995,12 @@ export const MOCK_USERS_DATABASE: Record<string, User> = {
             { hotelId: 'h8', action: 'like' },
         ], following: ['f7', 'f12'], isExpert: true, bio: 'Обожаю городские путешествия и отели с историей. В моих отзывах всегда найдете детали, которые не пишут в гидах.'
     },
-    'f6': { id: 'f6', name: 'Ирина Кузнецова', avatarUrl: 'https://i.pravatar.cc/150?u=f6', level: 1, xp: 200, miles: 100, achievements: [], visitedLocations: [], discoverHistory: [], following: [], isExpert: false },
+    'f6': {
+        id: 'f6', name: 'Ирина Кузнецова', avatarUrl: 'https://i.pravatar.cc/150?u=f6', level: 1, xp: 200, miles: 100, achievements: [], visitedLocations: ['Волгоград, Россия'], discoverHistory: [
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h3', action: 'like' },
+        ], following: [], isExpert: false
+    },
     'f7': {
         id: 'f7', name: 'Максим Попов', avatarUrl: 'https://i.pravatar.cc/150?u=f7', level: 3, xp: 5500, miles: 10000, achievements: ['b1', 'b5', 'b6'], visitedLocations: ['Дубай, ОАЭ', 'Санкт-Петербург, Россия', 'Москва, Россия', 'Стамбул, Турция'], discoverHistory: [
             { hotelId: 'h9', action: 'like' },
@@ -962,7 +1012,13 @@ export const MOCK_USERS_DATABASE: Record<string, User> = {
             { hotelId: 'h10', action: 'like' },
         ], following: ['user123', 'f5'], isExpert: true, bio: 'Путешествую по работе и для души. Ценю хороший сервис и интересную архитектуру. Делюсь только проверенными местами.'
     }, // Expert
-    'f8': { id: 'f8', name: 'София Лебедева', avatarUrl: 'https://i.pravatar.cc/150?u=f8', level: 2, xp: 1300, miles: 1100, achievements: ['b1', 'b7'], visitedLocations: ['Сочи, Россия'], discoverHistory: [], following: [], isExpert: true },
+    'f8': {
+        id: 'f8', name: 'София Лебедева', avatarUrl: 'https://i.pravatar.cc/150?u=f8', level: 2, xp: 1300, miles: 1100, achievements: ['b1', 'b7'], visitedLocations: ['Сочи, Россия', 'Волгоград, Россия'], discoverHistory: [
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h4', action: 'like' },
+            { hotelId: 'h7', action: 'like' },
+        ], following: [], isExpert: true
+    },
     'f9': {
         id: 'f9', name: 'Артем Соколов', avatarUrl: 'https://i.pravatar.cc/150?u=f9', level: 2, xp: 4000, miles: 300, achievements: ['b1', 'b4', 'b5'], visitedLocations: ['Москва, Россия'], discoverHistory: [
             { hotelId: 'h1', action: 'like' },
@@ -972,7 +1028,13 @@ export const MOCK_USERS_DATABASE: Record<string, User> = {
             { hotelId: 'h5', action: 'like' },
         ], following: [], isExpert: true
     },
-    'f10': { id: 'f10', name: 'Виктория Козлова', avatarUrl: 'https://i.pravatar.cc/150?u=f10', level: 1, xp: 800, miles: 50, achievements: ['b1'], visitedLocations: ['Стамбул, Турция'], discoverHistory: [], following: [], isExpert: false },
+    'f10': {
+        id: 'f10', name: 'Виктория Козлова', avatarUrl: 'https://i.pravatar.cc/150?u=f10', level: 1, xp: 800, miles: 50, achievements: ['b1'], visitedLocations: ['Стамбул, Турция', 'Волгоград, Россия'], discoverHistory: [
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h2', action: 'like' },
+            { hotelId: 'h9', action: 'dislike' },
+        ], following: [], isExpert: false
+    },
     'f11': {
         id: 'f11', name: 'Михаил Новиков', avatarUrl: 'https://i.pravatar.cc/150?u=f11', level: 1, xp: 1000, miles: 2000, achievements: ['b1'], visitedLocations: ['Казань, Россия'], discoverHistory: [
             { hotelId: 'h6', action: 'like' },
@@ -985,6 +1047,21 @@ export const MOCK_USERS_DATABASE: Record<string, User> = {
             { hotelId: 'h1', action: 'like' }, { hotelId: 'h2', action: 'like' }, { hotelId: 'h3', action: 'like' }, { hotelId: 'h4', action: 'like' }, { hotelId: 'h5', action: 'like' }, { hotelId: 'h6', action: 'like' }, { hotelId: 'h7', action: 'like' }, { hotelId: 'h8', action: 'like' }, { hotelId: 'h9', action: 'like' }, { hotelId: 'h10', action: 'like' }, { hotelId: 'h11', action: 'like' }
         ], following: ['f7', 'user123', 'f5'], isExpert: true, bio: 'Профессиональный путешественник и отельный критик. Ищу жемчужины по всему миру.'
     }, // New Super Expert
+    // Additional users that current user follows but are not friends
+    'u1': {
+        id: 'u1', name: 'Мария Козлова', avatarUrl: 'https://i.pravatar.cc/150?u=u1', level: 2, xp: 2000, miles: 800, achievements: ['b1', 'b4'], visitedLocations: ['Волгоград, Россия', 'Москва, Россия'], discoverHistory: [
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h3', action: 'like' },
+            { hotelId: 'h12', action: 'like' },
+        ], following: [], isExpert: false
+    },
+    'u2': {
+        id: 'u2', name: 'Алексей Новиков', avatarUrl: 'https://i.pravatar.cc/150?u=u2', level: 3, xp: 3000, miles: 1500, achievements: ['b1', 'b2', 'b5'], visitedLocations: ['Волгоград, Россия', 'Санкт-Петербург, Россия', 'Казань, Россия'], discoverHistory: [
+            { hotelId: 'h1', action: 'like' },
+            { hotelId: 'h3', action: 'like' },
+            { hotelId: 'h12', action: 'like' },
+        ], following: [], isExpert: true
+    },
 };
 
 export const MOCK_WISHLISTS: Wishlist[] = [
@@ -1017,6 +1094,8 @@ export const generateDiscoverFeed = (
     allHotels: Hotel[],
     allReviews: Review[],
     allFriends: Friend[],
+    currentUser: User,
+    allUsers: Record<string, User>,
 ): DiscoverItem[] => {
     const friendReviewedHotelIds = new Set(allReviews.filter(r => allFriends.some(f => f.id === r.friendId)).map(r => r.hotelId));
 
@@ -1036,16 +1115,30 @@ export const generateDiscoverFeed = (
             sliderContent.push({ type: 'video', url: hotel.videoUrl });
         }
 
-        // Add friend reviews
+        // Add reviews from friends first
         const hotelFriendReviews = allReviews.filter(r =>
             r.hotelId === hotel.id &&
-            allFriends.some(f => f.id === r.friendId) &&
-            r.status === 'approved'
+            allFriends.some(f => f.id === r.friendId)
         );
+
         hotelFriendReviews.forEach(review => {
             const friend = allFriends.find(f => f.id === review.friendId);
             if (friend) {
                 sliderContent.push({ type: 'review', review, friend });
+            }
+        });
+
+        // Add reviews from users that current user follows (but are not friends)
+        const hotelFollowingReviews = allReviews.filter(r =>
+            r.hotelId === hotel.id &&
+            currentUser.following.includes(r.friendId) &&
+            !allFriends.some(f => f.id === r.friendId) // Exclude friends as they're already added above
+        );
+
+        hotelFollowingReviews.forEach(review => {
+            const user = allUsers[review.friendId];
+            if (user) {
+                sliderContent.push({ type: 'following_review', review, user });
             }
         });
 

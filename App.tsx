@@ -381,7 +381,7 @@ const App: React.FC = () => {
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <Routes>
           <Route path="/" element={<Recommendations recommendations={recommendations} loading={dataLoading} vibeCornerFeed={vibeCornerFeed} currentUser={currentUser} />} />
-          <Route path="/discover" element={<DiscoverPage hotels={hotels} reviews={reviews} friends={friends} currentUser={currentUser} onDiscoverAction={handleDiscoverAction} setToast={setToast} />} />
+          <Route path="/discover" element={<DiscoverPage hotels={hotels} reviews={reviews} friends={friends} currentUser={currentUser} allUsers={MOCK_USERS_DATABASE} onDiscoverAction={handleDiscoverAction} setToast={setToast} />} />
           <Route path="/admin" element={<Admin reviews={reviews} friends={friends} hotels={hotels} onStatusChange={handleStatusChange} loading={dataLoading} />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/hotel/:hotelId" element={<HotelPage hotels={hotels} reviews={reviews} friends={friends} user={currentUser} wishlists={wishlists} onSpendMiles={handleSpendMiles} onAddToWishlist={handleAddToWishlist} allUsers={MOCK_USERS_DATABASE} />} />
