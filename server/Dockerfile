@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Копируем package.json из корневой директории
 # Нужно для установки зависимостей (express, telegram-bot-api и т.д.)
-COPY ../package*.json ./
+COPY package*.json ./
 
 # Устанавливаем зависимости
 RUN npm ci --only=production
